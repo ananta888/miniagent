@@ -1,0 +1,19 @@
+[model]
+model = "microsoft/Phi-3.5-mini-instruct"
+revision = "main"
+max_new_tokens = 512
+max_context_tokens = 4096
+temperature = 0.0
+device = "auto"
+local_files_only = true
+max_generation_seconds = 120.0
+
+[limits]
+max_iterations = 20
+max_tool_calls = 12
+max_tokens = 60000
+max_runtime_seconds = 1800.0
+max_consecutive_failures = 3
+max_parse_retries = 2
+max_blocked_actions = 3
+max_repeated_actions = 3

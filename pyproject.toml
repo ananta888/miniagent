@@ -1,0 +1,29 @@
+[build-system]
+requires = ["setuptools>=75"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "miniagent"
+version = "0.1.0"
+description = "A small deterministic runtime for local language models"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = ["pydantic>=2,<3"]
+
+[project.optional-dependencies]
+local = [
+    "torch>=2.5,<3",
+    "transformers>=4.57,<5",
+    "tokenizers>=0.22,<0.24",
+    "safetensors>=0.4,<1",
+    "accelerate>=1,<2",
+]
+
+[project.scripts]
+miniagent = "miniagent.cli:main"
+
+[tool.setuptools.packages.find]
+include = ["miniagent*"]
+
+[tool.setuptools.package-data]
+"miniagent.prompts" = ["*.md"]

@@ -1,0 +1,1 @@
+"""Model = proposal. Runtime = authority."""
