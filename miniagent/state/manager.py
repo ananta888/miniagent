@@ -8,7 +8,7 @@ from pathlib import Path
 from miniagent.logging.events import EventLog
 from miniagent.planning.planner import Planner
 from miniagent.state.files import atomic_write, repair_tail
-from miniagent.state.models import AgentState, ModelConfig, RunLimits
+from miniagent.state.models import AgentState, ModelConfig, RunLimits, ToolPolicy
 from miniagent.tools.base import workspace_path
 
 
@@ -18,14 +18,15 @@ class StateManager:
 
     @classmethod
     def create(cls, runs_dir: Path, goal: str, model: ModelConfig, limits: RunLimits,
-               source: Path | None = None, required_reads: list[str] | None = None) -> "StateManager":
+               source: Path | None = None, required_reads: list[str] | None = None,
+               policy: ToolPolicy | None = None) -> "StateManager":
         run_id = uuid.uuid4().hex[:12]
         state = AgentState(run_id=run_id, goal=goal, started_at=time.time(),
-                           model_config_saved=model, limits=limits)
+                           model_config_saved=model, limits=limits, policy=policy or ToolPolicy())
         run_dir = runs_dir.resolve() / run_id
         if source is not None and runs_dir.resolve().is_relative_to(source.resolve()):
             raise ValueError("Runs directory must be outside the source workspace")
-        for path in required_reads or []:
+        for path in [*(required_reads or []), *state.policy.write_paths]:
             workspace_path(run_dir / "workspace", path)
         run_dir.mkdir(parents=True, exist_ok=False)
         (run_dir / "artifacts").mkdir()

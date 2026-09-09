@@ -1,11 +1,13 @@
 from collections.abc import Callable
 
 from miniagent.execution.executor import Executor
-from miniagent.gates.pipeline import (ArgumentGate, BudgetGate, CompletionGate, FailureGate,
+from miniagent.gates.pipeline import (ArgumentGate, BudgetGate, CommandGate, CompletionGate, FailureGate,
                                      GatePipeline, LoopGate, PathGate, SchemaGate, StepGate, ToolGate)
 from miniagent.loop import AgentLoop
 from miniagent.model.base import ModelBackend
 from miniagent.parsing.json_parser import ParserPipeline, StrictJSONParser
+from miniagent.parsing.fenced_json_parser import FencedJSONParser
+from miniagent.parsing.tool_recovery_parser import ToolRecoveryParser
 from miniagent.prompts.builder import PromptBuilder
 from miniagent.state.manager import StateManager
 from miniagent.state.models import AgentState, ModelConfig
@@ -13,6 +15,8 @@ from miniagent.tools.base import ToolContext
 from miniagent.tools.list_files import ListFiles
 from miniagent.tools.read_file import ReadFile
 from miniagent.tools.registry import ToolRegistry
+from miniagent.tools.shell import Shell
+from miniagent.tools.write_file import WriteFile
 
 
 def local_backend(config: ModelConfig) -> ModelBackend:
@@ -34,16 +38,22 @@ class Runtime:
             state = self.manager.recover()
             if state.status != "running":
                 return state
-            registry = ToolRegistry([ReadFile(), ListFiles()])
-            context = ToolContext(self.manager.run_dir / "workspace")
+            tools = [ReadFile(), ListFiles()]
+            if state.policy.write_paths:
+                tools.append(WriteFile())
+            if state.policy.commands:
+                tools.append(Shell())
+            registry = ToolRegistry(tools)
+            context = ToolContext(self.manager.run_dir / "workspace", policy=state.policy,
+                                  deadline=state.started_at + state.limits.max_runtime_seconds)
             execution_gates = GatePipeline([
                 SchemaGate(), ToolGate(registry), ArgumentGate(registry), PathGate(context),
-                BudgetGate(), FailureGate(), LoopGate(),
+                CommandGate(), BudgetGate(), FailureGate(), LoopGate(),
             ])
-            gates = GatePipeline([*execution_gates.gates, StepGate(), CompletionGate()])
+            gates = GatePipeline([*execution_gates.gates, StepGate(), CompletionGate(context)])
             executor = Executor(registry, context, execution_gates)
             # Backend construction is lazy: status and completed resume need no model.
             model = self.model or self.backend_factory(state.model_config_saved)
-            loop = AgentLoop(self.manager, model, ParserPipeline([StrictJSONParser()]),
+            loop = AgentLoop(self.manager, model, ParserPipeline([StrictJSONParser(), FencedJSONParser(), ToolRecoveryParser()]),
                              gates, executor, PromptBuilder(registry))
             return loop.run(state)

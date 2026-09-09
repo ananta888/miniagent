@@ -2,12 +2,14 @@ from miniagent.state.models import AgentState, PlanAction, StepState
 
 
 class Planner:
-    """Initial planning only. The runtime validates proposals before applying them."""
+    """Apply validated plans, retaining evidence from completed steps on replan."""
 
     def apply(self, action: PlanAction, state: AgentState) -> None:
         if state.steps:
-            raise ValueError("Replanning is outside this first slice")
-        state.steps = [StepState(proposal=step) for step in action.steps]
+            state.replans += 1
+        completed = [step for step in state.steps if step.observation_id is not None]
+        state.steps = completed + [StepState(proposal=step) for step in action.steps]
+        state.needs_replan = False
 
     def render(self, state: AgentState) -> str:
         lines = ["# Goal", "", state.goal, "", "# Plan", ""]
@@ -25,4 +27,6 @@ class Planner:
                   "- Every planned tool action has a complete successful observation.",
                   "- At least one file has been read completely."]
         lines += [f"- Read `{path}` completely." for path in state.required_reads]
+        lines += [f"- Command `{name}` succeeds against the current source bytes."
+                  for name in state.policy.required_verifications]
         return "\n".join(lines) + "\n"

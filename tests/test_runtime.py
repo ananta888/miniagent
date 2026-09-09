@@ -87,6 +87,24 @@ class RuntimeTests(unittest.TestCase):
         self.assertEqual(state.status, "blocked")
         self.assertEqual(state.tool_calls, 0)
 
+    def test_recovered_json_still_passes_through_gates(self):
+        bad = {"type":"plan", "steps":[{"description":"Read", "tool":"read_file", "arguments":{"path":"/etc/passwd"}}]}
+        raw = '```json\n' + json.dumps(bad) + '\n```'
+        with patch.object(ReadFile, "execute", side_effect=AssertionError("Unsafe recovery")):
+            state, _ = self.run_responses([raw] * 3)
+        self.assertEqual(state.status, "blocked")
+        self.assertEqual(state.metrics.parser_recoveries, 3)
+        self.assertEqual(state.metrics.blocked_actions, 3)
+        self.assertEqual(state.tool_calls, 0)
+
+    def test_mislabeled_tool_recovery_does_not_bypass_path_gate(self):
+        raw = '{"type":"plan","tool":"read_file","arguments":{"path":"/etc/passwd"}}'
+        with patch.object(ReadFile, "execute", side_effect=AssertionError("Unsafe recovery")):
+            state, _ = self.run_responses([raw] * 3)
+        self.assertEqual(state.status, "blocked")
+        self.assertEqual(state.metrics.parser_recoveries, 3)
+        self.assertEqual(state.tool_calls, 0)
+
     def test_iteration_budget_counts_planning(self):
         state = self.manager.load()
         state.limits.max_iterations = 2

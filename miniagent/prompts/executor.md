@@ -1,5 +1,5 @@
-If CURRENT STEP exists, propose its exact tool and arguments:
-{"type":"tool","tool":"read_file","arguments":{"path":"example.txt"}}
-The runtime marks a step complete only after a successful complete observation.
-When all steps are complete, answer the goal using the observations:
-{"type":"final","answer":"Your evidence-based answer"}
+Execute CURRENT STEP now. Return one tool action using REQUIRED OUTPUT FORMAT.
+For write_file, generate the complete working file as the content argument.
+Encode file content as a JSON string with escaped newlines (\n).
+Use the specification and previous observations when writing code.
+The runtime records the result and advances the plan after successful execution.

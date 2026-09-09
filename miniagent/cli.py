@@ -7,7 +7,7 @@ from pathlib import Path
 
 from miniagent.runtime import Runtime
 from miniagent.state.manager import StateManager
-from miniagent.state.models import ModelConfig, RunLimits
+from miniagent.state.models import ModelConfig, RunLimits, ToolPolicy
 
 
 def resolve_run(value: str, runs_dir: Path) -> Path:
@@ -20,12 +20,12 @@ def resolve_run(value: str, runs_dir: Path) -> Path:
 
 
 def parser() -> argparse.ArgumentParser:
-    cli = argparse.ArgumentParser(description="Minimal local agent runtime (read-only first slice)")
+    cli = argparse.ArgumentParser(description="Minimal local agent runtime")
     commands = cli.add_subparsers(dest="command", required=True)
     run = commands.add_parser("run", help="Create and execute a run")
     run.add_argument("goal")
     run.add_argument("--model", help="Local model path or Hugging Face model ID")
-    run.add_argument("--config", type=Path, help="TOML with [model] and [limits]")
+    run.add_argument("--config", type=Path, help="TOML with [model], [limits] and optional [tools]")
     run.add_argument("--workspace", type=Path, help="Directory copied into the new run")
     run.add_argument("--require-read", action="append", default=[], help="File that must be read completely")
     run.add_argument("--allow-download", action="store_true", help="Allow model files to be downloaded")
@@ -42,8 +42,8 @@ def main(argv: list[str] | None = None) -> int:
     try:
         if args.command == "run":
             config = tomllib.loads(args.config.read_text()) if args.config else {}
-            if set(config) - {"model", "limits"}:
-                raise ValueError("Config only accepts [model] and [limits]")
+            if set(config) - {"model", "limits", "tools"}:
+                raise ValueError("Config only accepts [model], [limits] and [tools]")
             model_values = config.get("model", {})
             if args.model:
                 model_values["model"] = args.model
@@ -52,6 +52,7 @@ def main(argv: list[str] | None = None) -> int:
             manager = StateManager.create(
                 args.runs_dir, args.goal, ModelConfig.model_validate(model_values),
                 RunLimits.model_validate(config.get("limits", {})), args.workspace, args.require_read,
+                ToolPolicy.model_validate(config.get("tools", {})),
             )
             print(f"Run: {manager.run_dir}", flush=True)
         else:

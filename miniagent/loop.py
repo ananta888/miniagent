@@ -54,6 +54,8 @@ class AgentLoop:
                 state.metrics.invalid_actions += 1
                 state.parse_failures += 1
                 state.feedback = f"Previous response could not be parsed. {error} Do not explain the format."
+                if response.output_tokens >= state.model_config_saved.max_new_tokens:
+                    state.feedback += " Response reached the output token limit. Keep the action and code concise."
                 self.events.emit("parse_failed", iteration=state.iteration)
                 if state.parse_failures > state.limits.max_parse_retries:
                     self.stop(state, "Parse retry limit reached")
@@ -61,6 +63,9 @@ class AgentLoop:
                     self.manager.save(state)
                 continue
             state.parse_failures = 0
+            if self.parser.recovered:
+                state.metrics.parser_recoveries += 1
+                self.events.emit("parser_recovered", iteration=state.iteration)
             self.events.emit("action_parsed", iteration=state.iteration, action=action.model_dump())
             decision = self.gates.check(action, state)
             if decision.allowed and isinstance(action, PlanAction):
@@ -136,20 +141,34 @@ class AgentLoop:
         return response
 
     def validate_plan(self, action: PlanAction, state: AgentState) -> GateResult:
-        proposed_reads = set()
-        for step in action.steps:
-            proposal = ToolAction(type="tool", tool=step.tool, arguments=step.arguments)
+        proposed_reads = set(state.verified_reads)
+        last_write = -1
+        verification_steps = {}
+        for index, step in enumerate(action.steps):
+            arguments = step.arguments
+            if step.tool == "write_file":
+                if set(arguments) != {"path"}:
+                    return blocked("Plan write_file with path only; generate content during execution")
+                arguments = {**arguments, "content": ""}
+                last_write = index
+            proposal = ToolAction(type="tool", tool=step.tool, arguments=arguments)
             decision = self.executor.authorize(proposal, state)
             if not decision.allowed:
                 return decision
             tool = self.executor.registry.get(step.tool)
             assert tool is not None
             # Canonical defaults make omitted path='.' equal to explicit path='.'.
-            step.arguments = tool.args_model.model_validate(step.arguments).model_dump()
+            validated = tool.args_model.model_validate(arguments).model_dump()
+            step.arguments = {"path": validated["path"]} if step.tool == "write_file" else validated
             if step.tool == "read_file":
                 proposed_reads.add(str(Path(step.arguments["path"])))
+            elif step.tool == "shell":
+                verification_steps[step.arguments["command"]] = index
         if not proposed_reads or not set(state.required_reads).issubset(proposed_reads):
             return blocked("Plan must include read_file and all REQUIRED READS")
+        for command in state.policy.required_verifications:
+            if verification_steps.get(command, -1) <= last_write:
+                return blocked(f"Plan must verify after all writes using command: {command}")
         return GateResult(allowed=True)
 
     def execute_tool(self, action: ToolAction, state: AgentState) -> None:
@@ -204,6 +223,7 @@ class AgentLoop:
         state.last_action = current_signature
         state.last_result_hash = observation.result_hash
         if observation.success:
+            state.needs_replan = False
             state.metrics.successful_tools += 1
             state.consecutive_failures = 0
             step = state.current_step
@@ -213,10 +233,22 @@ class AgentLoop:
                 path = str(Path(action.arguments["path"]))
                 if path not in state.verified_reads:
                     state.verified_reads.append(path)
+                if path in state.required_reads[:4]:
+                    state.required_read_summaries[path] = observation.summary[:1200]
+            elif action.tool == "write_file":
+                state.verifications = {}
+                path = str(Path(action.arguments["path"]))
+                state.verified_reads = [p for p in state.verified_reads if p != path]
+                state.required_read_summaries.pop(path, None)
+            elif action.tool == "shell" and observation.exit_code == 0 and observation.verification_digest:
+                state.verifications[action.arguments["command"]] = observation.verification_digest
             state.feedback = None
         else:
+            state.needs_replan = True
             state.metrics.failed_tools += 1
             state.consecutive_failures += 1
             state.feedback = observation.summary
+            if action.tool == "shell":
+                state.verifications.pop(action.arguments["command"], None)
         state.pending_action = None
         self.manager.save(state)

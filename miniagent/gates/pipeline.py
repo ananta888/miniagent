@@ -6,7 +6,7 @@ from typing import Protocol
 from pydantic import ValidationError
 
 from miniagent.state.models import ACTION_ADAPTER, Action, AgentState, FinalAction, PlanAction, StrictModel, ToolAction
-from miniagent.tools.base import ToolContext, workspace_path
+from miniagent.tools.base import ToolContext, workspace_digest, workspace_path, writable_path
 from miniagent.tools.registry import ToolRegistry
 
 
@@ -59,7 +59,9 @@ class ArgumentGate:
             try:
                 tool.args_model.model_validate(action.arguments)
             except ValidationError as error:
-                return blocked(f"Invalid arguments: {error.errors(include_input=False)[0]['msg']}")
+                detail = error.errors(include_input=False)[0]
+                field = ".".join(str(part) for part in detail["loc"])
+                return blocked(f"Invalid arguments for {action.tool}: {field}: {detail['msg']}")
         return GateResult(allowed=True)
 
 
@@ -71,8 +73,18 @@ class PathGate:
         if isinstance(action, ToolAction):
             try:
                 workspace_path(self.context.workspace, action.arguments.get("path", "."))
+                if action.tool == "write_file":
+                    writable_path(self.context, action.arguments["path"])
             except (ValueError, OSError, RuntimeError, TypeError) as error:
                 return blocked(f"Invalid path: {error}")
+        return GateResult(allowed=True)
+
+
+class CommandGate:
+    def check(self, action: Action, state: AgentState) -> GateResult:
+        if isinstance(action, ToolAction) and action.tool == "shell":
+            if action.arguments.get("command") not in state.policy.commands:
+                return blocked("Command is not in the configured allowlist")
         return GateResult(allowed=True)
 
 
@@ -106,18 +118,28 @@ class LoopGate:
 class StepGate:
     def check(self, action: Action, state: AgentState) -> GateResult:
         if isinstance(action, PlanAction):
-            return GateResult(allowed=True) if not state.steps else blocked("Initial plan already exists")
+            if state.steps and state.consecutive_failures == 0:
+                return blocked("Replanning requires a failed tool observation")
+            limit = state.limits.max_replans
+            if state.steps and limit != "unlimited" and state.replans >= limit:
+                return blocked("Replan budget reached", terminal=True)
         if isinstance(action, ToolAction):
             step = state.current_step
             if step is None:
                 return blocked("No pending plan step")
             expected = ToolAction(type="tool", tool=step.proposal.tool, arguments=step.proposal.arguments)
-            if signature(action) != signature(expected):
+            comparable = action
+            if action.tool == "write_file":
+                comparable = action.model_copy(update={"arguments": {"path": action.arguments.get("path")}})
+            if signature(comparable) != signature(expected):
                 return blocked("Tool and arguments must match CURRENT STEP")
         return GateResult(allowed=True)
 
 
+@dataclass
 class CompletionGate:
+    context: ToolContext | None = None
+
     def check(self, action: Action, state: AgentState) -> GateResult:
         if isinstance(action, FinalAction):
             if not state.steps or state.current_step is not None:
@@ -126,6 +148,16 @@ class CompletionGate:
                 return blocked("At least one complete read_file observation is required")
             if not set(state.required_reads).issubset(state.verified_reads):
                 return blocked("Required read_file evidence is missing")
+            if state.policy.required_verifications:
+                if self.context is None:
+                    return blocked("Verification context is missing")
+                try:
+                    digest = workspace_digest(self.context)
+                except (ValueError, OSError, RuntimeError) as error:
+                    return blocked(f"Cannot verify current source: {error}")
+                for command in state.policy.required_verifications:
+                    if state.verifications.get(command) != digest:
+                        return blocked(f"Successful verification of current source required: {command}")
         return GateResult(allowed=True)
 
 

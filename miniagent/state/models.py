@@ -1,6 +1,6 @@
 from typing import Annotated, Any, Literal
 
-from pydantic import BaseModel, ConfigDict, Field, TypeAdapter
+from pydantic import BaseModel, ConfigDict, Field, TypeAdapter, model_validator
 
 
 class StrictModel(BaseModel):
@@ -27,6 +27,23 @@ class RunLimits(StrictModel):
     max_parse_retries: int = Field(default=2, ge=0)
     max_blocked_actions: int = Field(default=3, ge=1)
     max_repeated_actions: int = Field(default=3, ge=1)
+    max_replans: Annotated[int, Field(ge=0)] | Literal["unlimited"] = 2
+
+
+class ToolPolicy(StrictModel):
+    write_paths: list[str] = Field(default_factory=list, max_length=30)
+    commands: dict[str, list[str]] = Field(default_factory=dict)
+    required_verifications: list[str] = Field(default_factory=list)
+    command_timeout_seconds: float = Field(default=20.0, gt=0, le=120)
+
+    @model_validator(mode="after")
+    def check_commands(self):
+        for name, argv in self.commands.items():
+            if not name or not argv or any(not arg or "\x00" in arg for arg in argv):
+                raise ValueError("Named commands require a nonempty argv without NUL")
+        if not set(self.required_verifications).issubset(self.commands):
+            raise ValueError("Required verifications must name configured commands")
+        return self
 
 
 class ToolAction(StrictModel):
@@ -77,6 +94,8 @@ class Observation(StrictModel):
     summary: str
     raw_output_ref: str
     result_hash: str
+    exit_code: int | None = None
+    verification_digest: str | None = None
 
 
 class Metrics(StrictModel):
@@ -98,11 +117,16 @@ class AgentState(StrictModel):
     finished_at: float | None = None
     model_config_saved: ModelConfig = Field(default_factory=ModelConfig)
     limits: RunLimits = Field(default_factory=RunLimits)
+    policy: ToolPolicy = Field(default_factory=ToolPolicy)
     iteration: int = Field(default=0, ge=0)
     steps: list[StepState] = Field(default_factory=list)
     # User-selected evidence requirements; the model cannot change these.
     required_reads: list[str] = Field(default_factory=list)
     verified_reads: list[str] = Field(default_factory=list)
+    required_read_summaries: dict[str, str] = Field(default_factory=dict)
+    verifications: dict[str, str] = Field(default_factory=dict)
+    replans: int = 0
+    needs_replan: bool = False
     last_action: str | None = None
     last_result_hash: str | None = None
     consecutive_failures: int = 0

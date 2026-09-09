@@ -52,7 +52,7 @@ class TransformersBackend:
         if window and count + self.config.max_new_tokens > window:
             raise ValueError("Prompt and output allowance exceed the model context window")
         sampling = self.config.temperature > 0
-        kwargs = {"temperature": self.config.temperature} if sampling else {}
+        kwargs = {"temperature": self.config.temperature} if sampling else {"temperature": 1.0, "top_p": 1.0, "top_k": 50}
         with self.torch.inference_mode():
             output = self.model.generate(
                 **inputs,

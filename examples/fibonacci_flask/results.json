@@ -1,0 +1,505 @@
+{
+  "date": "2026-09-09",
+  "kind": "exploratory development runs, not a controlled benchmark",
+  "notes": [
+    "Prompts, parser recovery and runtime changed between trials; do not compare these as fixed configurations.",
+    "Scripted responses deliberately inject and repair a bug; their token counts are synthetic and omitted.",
+    "No trained Phi-3.5 run completed; these trials use smaller Qwen models.",
+    "Verification suite expanded to all 1001 allowed indices during development.",
+    "Raw run logs remain local under ignored runs/ directories."
+  ],
+  "environment": {
+    "torch": "2.6.0+cu124",
+    "transformers": "4.57.6",
+    "pydantic": "2.13.5",
+    "Flask": "3.1.3"
+  },
+  "final_verifier_sha256": "5bf0611dceafb66237dce8f7b02e175774dc5eacdf6e9dcee0e15e6375fe5684",
+  "runs": [
+    {
+      "run_id": "c27a8c7a05b7",
+      "mode": "local_model",
+      "model_config": {
+        "model": "Qwen/Qwen2.5-Coder-0.5B-Instruct",
+        "revision": "main",
+        "max_new_tokens": 1536,
+        "max_context_tokens": 8192,
+        "temperature": 0.0,
+        "device": "auto",
+        "local_files_only": true,
+        "max_generation_seconds": 120.0
+      },
+      "limits": {
+        "max_iterations": 20,
+        "max_tool_calls": 80,
+        "max_tokens": 150000,
+        "max_runtime_seconds": 3600.0,
+        "max_consecutive_failures": 3,
+        "max_parse_retries": 2,
+        "max_blocked_actions": 3,
+        "max_repeated_actions": 3,
+        "max_replans": 2
+      },
+      "status": "blocked",
+      "reason": "Parse retry limit reached",
+      "iterations": 3,
+      "tool_calls": 0,
+      "replans": 0,
+      "metrics": {
+        "llm_calls": 3,
+        "parser_recoveries": 0,
+        "invalid_actions": 3,
+        "blocked_actions": 0,
+        "loop_detections": 0,
+        "failed_tools": 0,
+        "successful_tools": 0
+      },
+      "tokens": 3418,
+      "runtime_seconds": 16.022,
+      "verifications": []
+    },
+    {
+      "run_id": "a35887c00ee7",
+      "mode": "local_model",
+      "model_config": {
+        "model": "Qwen/Qwen2.5-Coder-0.5B-Instruct",
+        "revision": "main",
+        "max_new_tokens": 1536,
+        "max_context_tokens": 8192,
+        "temperature": 0.0,
+        "device": "auto",
+        "local_files_only": true,
+        "max_generation_seconds": 120.0
+      },
+      "limits": {
+        "max_iterations": 20,
+        "max_tool_calls": 80,
+        "max_tokens": 150000,
+        "max_runtime_seconds": 3600.0,
+        "max_consecutive_failures": 3,
+        "max_parse_retries": 2,
+        "max_blocked_actions": 3,
+        "max_repeated_actions": 3,
+        "max_replans": 2
+      },
+      "status": "blocked",
+      "reason": "Every plan step needs a successful, complete observation",
+      "iterations": 4,
+      "tool_calls": 0,
+      "replans": 0,
+      "metrics": {
+        "llm_calls": 4,
+        "parser_recoveries": 4,
+        "invalid_actions": 0,
+        "blocked_actions": 3,
+        "loop_detections": 0,
+        "failed_tools": 0,
+        "successful_tools": 0
+      },
+      "tokens": 4115,
+      "runtime_seconds": 8.247,
+      "verifications": []
+    },
+    {
+      "run_id": "78f3fffd2488",
+      "mode": "local_model",
+      "model_config": {
+        "model": "Qwen/Qwen2.5-Coder-0.5B-Instruct",
+        "revision": "main",
+        "max_new_tokens": 1536,
+        "max_context_tokens": 8192,
+        "temperature": 0.0,
+        "device": "auto",
+        "local_files_only": true,
+        "max_generation_seconds": 120.0
+      },
+      "limits": {
+        "max_iterations": 20,
+        "max_tool_calls": 80,
+        "max_tokens": 150000,
+        "max_runtime_seconds": 3600.0,
+        "max_consecutive_failures": 3,
+        "max_parse_retries": 2,
+        "max_blocked_actions": 3,
+        "max_repeated_actions": 3,
+        "max_replans": 2
+      },
+      "status": "blocked",
+      "reason": "Parse retry limit reached",
+      "iterations": 4,
+      "tool_calls": 0,
+      "replans": 0,
+      "metrics": {
+        "llm_calls": 4,
+        "parser_recoveries": 1,
+        "invalid_actions": 3,
+        "blocked_actions": 0,
+        "loop_detections": 0,
+        "failed_tools": 0,
+        "successful_tools": 0
+      },
+      "tokens": 2884,
+      "runtime_seconds": 7.406,
+      "verifications": []
+    },
+    {
+      "run_id": "a37dfeafdd48",
+      "mode": "local_model",
+      "model_config": {
+        "model": "Qwen/Qwen2.5-Coder-0.5B-Instruct",
+        "revision": "main",
+        "max_new_tokens": 1536,
+        "max_context_tokens": 8192,
+        "temperature": 0.0,
+        "device": "auto",
+        "local_files_only": true,
+        "max_generation_seconds": 120.0
+      },
+      "limits": {
+        "max_iterations": 20,
+        "max_tool_calls": 80,
+        "max_tokens": 150000,
+        "max_runtime_seconds": 3600.0,
+        "max_consecutive_failures": 3,
+        "max_parse_retries": 2,
+        "max_blocked_actions": 3,
+        "max_repeated_actions": 3,
+        "max_replans": 2
+      },
+      "status": "blocked",
+      "reason": "Parse retry limit reached",
+      "iterations": 11,
+      "tool_calls": 4,
+      "replans": 1,
+      "metrics": {
+        "llm_calls": 11,
+        "parser_recoveries": 6,
+        "invalid_actions": 5,
+        "blocked_actions": 0,
+        "loop_detections": 0,
+        "failed_tools": 1,
+        "successful_tools": 3
+      },
+      "tokens": 19140,
+      "runtime_seconds": 66.631,
+      "verifications": [
+        {
+          "exit_code": 1,
+          "summary": {
+            "tests_run": 0,
+            "failures": 0,
+            "errors": 1
+          }
+        }
+      ]
+    },
+    {
+      "run_id": "42c6d5450700",
+      "mode": "local_model",
+      "model_config": {
+        "model": "Qwen/Qwen2.5-Coder-0.5B-Instruct",
+        "revision": "main",
+        "max_new_tokens": 1536,
+        "max_context_tokens": 8192,
+        "temperature": 0.0,
+        "device": "auto",
+        "local_files_only": true,
+        "max_generation_seconds": 120.0
+      },
+      "limits": {
+        "max_iterations": 20,
+        "max_tool_calls": 80,
+        "max_tokens": 150000,
+        "max_runtime_seconds": 3600.0,
+        "max_consecutive_failures": 3,
+        "max_parse_retries": 2,
+        "max_blocked_actions": 3,
+        "max_repeated_actions": 3,
+        "max_replans": 2
+      },
+      "status": "blocked",
+      "reason": "Invalid arguments: Field required",
+      "iterations": 13,
+      "tool_calls": 4,
+      "replans": 1,
+      "metrics": {
+        "llm_calls": 13,
+        "parser_recoveries": 9,
+        "invalid_actions": 4,
+        "blocked_actions": 3,
+        "loop_detections": 0,
+        "failed_tools": 1,
+        "successful_tools": 3
+      },
+      "tokens": 17013,
+      "runtime_seconds": 17.944,
+      "verifications": [
+        {
+          "exit_code": 1,
+          "summary": {
+            "tests_run": 0,
+            "failures": 0,
+            "errors": 1
+          }
+        }
+      ]
+    },
+    {
+      "run_id": "273b97fdbed0",
+      "mode": "local_model",
+      "model_config": {
+        "model": "Qwen/Qwen2.5-Coder-0.5B-Instruct",
+        "revision": "main",
+        "max_new_tokens": 1536,
+        "max_context_tokens": 8192,
+        "temperature": 0.0,
+        "device": "auto",
+        "local_files_only": true,
+        "max_generation_seconds": 120.0
+      },
+      "limits": {
+        "max_iterations": 20,
+        "max_tool_calls": 80,
+        "max_tokens": 150000,
+        "max_runtime_seconds": 3600.0,
+        "max_consecutive_failures": 3,
+        "max_parse_retries": 2,
+        "max_blocked_actions": 3,
+        "max_repeated_actions": 3,
+        "max_replans": 2
+      },
+      "status": "blocked",
+      "reason": "Iteration budget reached",
+      "iterations": 20,
+      "tool_calls": 10,
+      "replans": 2,
+      "metrics": {
+        "llm_calls": 20,
+        "parser_recoveries": 15,
+        "invalid_actions": 5,
+        "blocked_actions": 2,
+        "loop_detections": 0,
+        "failed_tools": 2,
+        "successful_tools": 8
+      },
+      "tokens": 28049,
+      "runtime_seconds": 83.901,
+      "verifications": [
+        {
+          "exit_code": 1,
+          "summary": {
+            "tests_run": 0,
+            "failures": 0,
+            "errors": 1
+          }
+        },
+        {
+          "exit_code": 1,
+          "summary": {
+            "tests_run": 0,
+            "failures": 0,
+            "errors": 1
+          }
+        }
+      ]
+    },
+    {
+      "run_id": "08ce7004db04",
+      "mode": "local_model",
+      "model_config": {
+        "model": "Qwen/Qwen2.5-Coder-1.5B-Instruct",
+        "revision": "2e1fd397ee46e1388853d2af2c993145b0f1098a",
+        "max_new_tokens": 1536,
+        "max_context_tokens": 8192,
+        "temperature": 0.0,
+        "device": "auto",
+        "local_files_only": true,
+        "max_generation_seconds": 120.0
+      },
+      "limits": {
+        "max_iterations": 20,
+        "max_tool_calls": 80,
+        "max_tokens": 150000,
+        "max_runtime_seconds": 3600.0,
+        "max_consecutive_failures": 3,
+        "max_parse_retries": 2,
+        "max_blocked_actions": 3,
+        "max_repeated_actions": 3,
+        "max_replans": 2
+      },
+      "status": "blocked",
+      "reason": "Parse retry limit reached",
+      "iterations": 17,
+      "tool_calls": 9,
+      "replans": 2,
+      "metrics": {
+        "llm_calls": 17,
+        "parser_recoveries": 12,
+        "invalid_actions": 5,
+        "blocked_actions": 0,
+        "loop_detections": 0,
+        "failed_tools": 2,
+        "successful_tools": 7
+      },
+      "tokens": 28392,
+      "runtime_seconds": 123.446,
+      "verifications": [
+        {
+          "exit_code": 1,
+          "summary": {
+            "tests_run": 0,
+            "failures": 0,
+            "errors": 1
+          }
+        },
+        {
+          "exit_code": 1,
+          "summary": {
+            "tests_run": 0,
+            "failures": 0,
+            "errors": 1
+          }
+        }
+      ]
+    },
+    {
+      "run_id": "a3857638f52b",
+      "mode": "local_model",
+      "model_config": {
+        "model": "Qwen/Qwen2.5-Coder-1.5B-Instruct",
+        "revision": "2e1fd397ee46e1388853d2af2c993145b0f1098a",
+        "max_new_tokens": 1536,
+        "max_context_tokens": 8192,
+        "temperature": 0.0,
+        "device": "auto",
+        "local_files_only": true,
+        "max_generation_seconds": 120.0
+      },
+      "limits": {
+        "max_iterations": 20,
+        "max_tool_calls": 80,
+        "max_tokens": 150000,
+        "max_runtime_seconds": 3600.0,
+        "max_consecutive_failures": 3,
+        "max_parse_retries": 2,
+        "max_blocked_actions": 3,
+        "max_repeated_actions": 3,
+        "max_replans": 2
+      },
+      "status": "blocked",
+      "reason": "Parse retry limit reached",
+      "iterations": 6,
+      "tool_calls": 1,
+      "replans": 0,
+      "metrics": {
+        "llm_calls": 6,
+        "parser_recoveries": 2,
+        "invalid_actions": 4,
+        "blocked_actions": 0,
+        "loop_detections": 0,
+        "failed_tools": 0,
+        "successful_tools": 1
+      },
+      "tokens": 9021,
+      "runtime_seconds": 56.607,
+      "verifications": []
+    },
+    {
+      "run_id": "1d3cb89f3350",
+      "mode": "local_model",
+      "model_config": {
+        "model": "Qwen/Qwen2.5-Coder-1.5B-Instruct",
+        "revision": "2e1fd397ee46e1388853d2af2c993145b0f1098a",
+        "max_new_tokens": 1536,
+        "max_context_tokens": 8192,
+        "temperature": 0.0,
+        "device": "auto",
+        "local_files_only": true,
+        "max_generation_seconds": 120.0
+      },
+      "limits": {
+        "max_iterations": 20,
+        "max_tool_calls": 80,
+        "max_tokens": 150000,
+        "max_runtime_seconds": 3600.0,
+        "max_consecutive_failures": 3,
+        "max_parse_retries": 2,
+        "max_blocked_actions": 3,
+        "max_repeated_actions": 3,
+        "max_replans": 2
+      },
+      "status": "blocked",
+      "reason": "Parse retry limit reached",
+      "iterations": 12,
+      "tool_calls": 5,
+      "replans": 1,
+      "metrics": {
+        "llm_calls": 12,
+        "parser_recoveries": 7,
+        "invalid_actions": 5,
+        "blocked_actions": 0,
+        "loop_detections": 0,
+        "failed_tools": 1,
+        "successful_tools": 4
+      },
+      "tokens": 22165,
+      "runtime_seconds": 103.246,
+      "verifications": [
+        {
+          "exit_code": 1,
+          "summary": {
+            "tests_run": 0,
+            "failures": 0,
+            "errors": 1
+          }
+        }
+      ]
+    },
+    {
+      "run_id": "3b901ec44ad0",
+      "mode": "scripted",
+      "model_config": null,
+      "limits": {
+        "max_iterations": 20,
+        "max_tool_calls": 80,
+        "max_tokens": 150000,
+        "max_runtime_seconds": 3600.0,
+        "max_consecutive_failures": 3,
+        "max_parse_retries": 2,
+        "max_blocked_actions": 3,
+        "max_repeated_actions": 3,
+        "max_replans": 2
+      },
+      "status": "completed",
+      "reason": null,
+      "iterations": 9,
+      "tool_calls": 6,
+      "replans": 1,
+      "metrics": {
+        "llm_calls": 9,
+        "parser_recoveries": 0,
+        "invalid_actions": 0,
+        "blocked_actions": 0,
+        "loop_detections": 0,
+        "failed_tools": 1,
+        "successful_tools": 5
+      },
+      "tokens": null,
+      "runtime_seconds": 2.42,
+      "verifications": [
+        {
+          "exit_code": 1,
+          "summary": null
+        },
+        {
+          "exit_code": 0,
+          "summary": {
+            "tests_run": 12,
+            "failures": 0,
+            "errors": 0
+          }
+        }
+      ]
+    }
+  ]
+}
