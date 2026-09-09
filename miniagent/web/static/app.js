@@ -97,6 +97,22 @@ async function refresh(force = false) {
 $('run').onchange = () => refresh(true);
 $('refresh').onclick = () => refresh(true);
 $('source').onclick = () => { source = !source; render(); };
+function maximizePreview(active) {
+  // Resize in place: moving or recreating the iframe would reset a running game.
+  document.body.classList.toggle('preview-maximized', active);
+  for (const element of document.querySelectorAll('.topbar, .terminal-panel, #divider')) element.inert = active;
+  $('maximize').hidden = active;
+  $('maximize').setAttribute('aria-expanded', String(active));
+  $('restore').hidden = $('close-preview').hidden = !active;
+  (active ? $('close-preview') : $('maximize')).focus({preventScroll: true});
+}
+$('maximize').onclick = () => maximizePreview(true);
+$('restore').onclick = $('close-preview').onclick = () => maximizePreview(false);
+document.addEventListener('keydown', event => {
+  if (event.key === 'Escape' && document.body.classList.contains('preview-maximized')) {
+    event.preventDefault(); maximizePreview(false);
+  }
+});
 $('toggle-files').onclick = () => {
   const hidden = !$('file-browser').hidden; $('file-browser').hidden = hidden;
   $('toggle-files').setAttribute('aria-expanded', String(!hidden));

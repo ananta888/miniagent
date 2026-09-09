@@ -13,6 +13,12 @@ Die vorhandenen Zugangsdaten bleiben gültig.
   Java, Python, JSON und unbekannte Endungen, erscheinen zunächst als UTF-8-Text.
 - **Quelltext / Vorschau** wechselt bei HTML und Bildern die Darstellung.
 - **↻** lädt die Dateien und die gewählte Vorschau erneut.
+- **Maximieren ⛶** vergrößert die Vorschau auf das ganze Browserfenster. Eine
+  schmale Leiste bleibt oben sichtbar: **Zurück zur Gesamtansicht** oder **×**
+  rechts oben stellt die vorherige Aufteilung wieder her. Auf kleinen Bildschirmen
+  genügt **×**. Die HTML-Seite wird beim Umschalten nicht neu geladen; ein laufendes
+  Spiel bleibt erhalten. Escape funktioniert ebenfalls, solange der Tastaturfokus
+  außerhalb der eingebetteten HTML-Seite liegt.
 - **Trennlinie ziehen** verändert die Breite der beiden Bereiche. Bei fokussierter
   Trennlinie funktionieren auch die Pfeiltasten. Auf schmalen Bildschirmen stehen
   Chat und Ergebnis untereinander.
