@@ -90,6 +90,49 @@ keep_best = true           # Reparaturkontext des besten Testversuchs
 `keep_best` benötigt einen einzelnen erforderlichen Prüfbefehl mit dem strukturierten
 Report aus `miniagent.testing`. Der Zwischenstand ersetzt keine abschließende Verifikation.
 
+## Eigene Datei erzeugen: zum Beispiel Tetris in HTML
+
+Der allgemeine GGUF-Einstieg nutzt einen bereits gestarteten lokalen `llama-server`.
+Für den auf diesem Rechner gebauten K2-Server mit dem getesteten RTX-3080-Profil
+im ersten Terminal starten (Details zum Build: [RTX-3080-Test](examples/fibonacci_flask/rtx3080.md)):
+
+```bash
+cd /home/krusty/TinyPilot
+bash examples/start_k2.sh /home/krusty/joschka-lokal-hermes-test/models/K2-Horizon-7B-Q4_K_M.gguf
+```
+
+Sobald der Server bereit ist, im zweiten Terminal:
+
+```bash
+cd /home/krusty/TinyPilot
+.venv/bin/python -m examples.generate_file --output tetris.html \
+  'Erstelle ein spielbares Tetris als einzelne kompakte HTML-Datei mit eingebettetem CSS und JavaScript, ohne externe Abhängigkeiten. Verwende Canvas, alle sieben Tetrominos, Kollisionserkennung, Rotation, vollständige Reihen löschen, Punkte, Game Over und Neustart. Steuerung: Pfeiltasten, Leertaste für Hard Drop. Zeige eine kurze Bedienungsanleitung.'
+```
+
+Die Ausgabe nennt den vollständigen Dateipfad `runs/<run-id>/workspace/tetris.html`.
+Diesen im Browser öffnen, beispielsweise mit `xdg-open PFAD`. `--output` und die
+Aufgabenbeschreibung können ebenso Markdown, Java oder andere UTF-8-Dateien benennen.
+Das Modell liefert Dateiinhalt im Code-Fence, ohne JSON-Escaping. Das Beispiel legt
+einen festen Lese-/Schreibplan an und erlaubt nur die gewählte Zieldatei. Der Abschluss
+belegt die Dateierstellung; dieses allgemeine Beispiel hat **keinen Browser-Spieltest**.
+Automatische funktionale Reparaturen benötigen einen aufgabenspezifischen Prüfbefehl,
+wie im Flask-Beispiel. Parser- und Toolfehler gelangen bereits in den Korrekturkontext.
+
+Unterbrochene Runs fortsetzen, während derselbe Modellserver läuft:
+
+```bash
+.venv/bin/python -m examples.generate_file --resume runs/RUN_ID
+```
+
+Für neue Runs lässt sich `--limits-config examples/fibonacci_flask/long_run.toml`
+ergänzen (40 Reparaturpläne und weitere erhöhte Limits). Der Server bleibt für weitere
+Aufgaben geladen, bis er im ersten Terminal mit Strg+C beendet wird. Die Pfade oben
+sind das vorhandene lokale Setup; auf anderen Rechnern passende Modell-/Buildpfade verwenden.
+
+Lokal geprüft: Der obige Tetris-Aufruf erzeugte mit K2 Horizon eine HTML-Datei in drei
+LLM-Aufrufen, einschließlich zweier Parserkorrekturen. `node --check` akzeptierte das
+eingebettete JavaScript. Die Spielmechanik wurde dabei nicht im Browser getestet.
+
 ## Installation und deterministischer Test
 
 Python >= 3.12 auf Linux/POSIX. Die Laufzeit allein benötigt Pydantic; das Extra
