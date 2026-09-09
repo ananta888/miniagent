@@ -6,6 +6,8 @@ from pathlib import Path
 import sys
 import unittest
 
+from miniagent.testing import run_contract
+
 
 def fibonacci_oracle(n: int) -> int:
     def pair(index):
@@ -20,6 +22,7 @@ def fibonacci_oracle(n: int) -> int:
 class FibonacciContract(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
+        sys.path.insert(0, str(Path.cwd()))
         path = Path.cwd() / "app.py"
         spec = importlib.util.spec_from_file_location("generated_fibonacci_app", path)
         module = importlib.util.module_from_spec(spec)
@@ -46,7 +49,10 @@ class FibonacciContract(unittest.TestCase):
 
     def assert_bad_request(self, query):
         response = self.client.get("/fibonacci", query_string=query)
-        self.assertEqual(response.status_code, 400)
+        detail = repr(query)
+        if len(detail) > 120:
+            detail = detail[:80] + f"... ({len(detail)} characters in query representation)"
+        self.assertEqual(response.status_code, 400, f"GET /fibonacci query={detail} must reject input with HTTP 400")
         self.assertTrue(response.is_json)
         self.assertIsInstance(response.json.get("error"), str)
         self.assertTrue(response.json["error"])
@@ -69,8 +75,9 @@ class FibonacciContract(unittest.TestCase):
         for value, n in [("0010", 10), ("0000010", 10), ("0" * 5000, 0)]:
             with self.subTest(value=value[:20]):
                 response = self.client.get("/fibonacci", query_string={"n": value})
-                self.assertEqual(response.status_code, 200)
-                self.assertEqual(response.json, {"n": n, "value": fibonacci_oracle(n)})
+                detail = f"n={value[:20]!r} ({len(value)} digits, numeric value {n}); leading zeros are allowed"
+                self.assertEqual(response.status_code, 200, detail)
+                self.assertEqual(response.json, {"n": n, "value": fibonacci_oracle(n)}, detail)
 
     def test_unknown_route(self):
         self.assertEqual(self.client.get("/unknown").status_code, 404)
@@ -91,6 +98,4 @@ class FibonacciContract(unittest.TestCase):
 
 if __name__ == "__main__":
     suite = unittest.defaultTestLoader.loadTestsFromTestCase(FibonacciContract)
-    result = unittest.TextTestRunner(verbosity=2).run(suite)
-    print(json.dumps({"tests_run": result.testsRun, "failures": len(result.failures), "errors": len(result.errors)}))
-    raise SystemExit(0 if result.wasSuccessful() and result.testsRun == 12 else 1)
+    raise SystemExit(0 if run_contract(suite, expected_tests=12) else 1)

@@ -1,4 +1,5 @@
 import fcntl
+import hashlib
 import shutil
 import time
 import uuid
@@ -8,7 +9,7 @@ from pathlib import Path
 from miniagent.logging.events import EventLog
 from miniagent.planning.planner import Planner
 from miniagent.state.files import atomic_write, repair_tail
-from miniagent.state.models import AgentState, ModelConfig, RunLimits, ToolPolicy
+from miniagent.state.models import AgentState, ModelConfig, RunLimits, RuntimeOptions, ToolPolicy
 from miniagent.tools.base import workspace_path
 
 
@@ -19,10 +20,11 @@ class StateManager:
     @classmethod
     def create(cls, runs_dir: Path, goal: str, model: ModelConfig, limits: RunLimits,
                source: Path | None = None, required_reads: list[str] | None = None,
-               policy: ToolPolicy | None = None) -> "StateManager":
+               policy: ToolPolicy | None = None, options: RuntimeOptions | None = None) -> "StateManager":
         run_id = uuid.uuid4().hex[:12]
         state = AgentState(run_id=run_id, goal=goal, started_at=time.time(),
-                           model_config_saved=model, limits=limits, policy=policy or ToolPolicy())
+                           model_config_saved=model, limits=limits, policy=policy or ToolPolicy(),
+                           options=options.model_copy(deep=True) if options else RuntimeOptions())
         run_dir = runs_dir.resolve() / run_id
         if source is not None and runs_dir.resolve().is_relative_to(source.resolve()):
             raise ValueError("Runs directory must be outside the source workspace")
@@ -36,12 +38,22 @@ class StateManager:
             shutil.copytree(source, run_dir / "workspace", symlinks=True)
         state.required_reads = [str(Path(path)) for path in required_reads or []]
         manager = cls(run_dir)
+        if state.options.prompt_artifact:
+            manager.install_prompt(state, Path(state.options.prompt_artifact))
         atomic_write(run_dir / "goal.md", f"# Goal\n\n{goal}\n")
         for name in ("observations.jsonl", "events.jsonl"):
             (run_dir / name).touch()
         manager.save(state)
         EventLog(run_dir).emit("run_started", run_id=run_id)
         return manager
+
+    def install_prompt(self, state: AgentState, path: Path) -> None:
+        from miniagent.prompts.strategy import PromptArtifact
+        text = PromptArtifact.load(path).model_dump_json(indent=2)
+        digest = hashlib.sha256(text.encode()).hexdigest()[:16]
+        reference = f"artifacts/prompt-{digest}.json"
+        atomic_write(self.run_dir / reference, text + "\n")
+        state.options.prompt_artifact = reference
 
     @contextmanager
     def lock(self):

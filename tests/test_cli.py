@@ -12,6 +12,35 @@ from miniagent.state.models import ModelConfig, RunLimits
 
 
 class CLITests(unittest.TestCase):
+    def test_explicit_resume_config_preserves_goal_evidence_and_usage(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            manager = StateManager.create(root / "runs", "Original goal", ModelConfig(), RunLimits())
+            state = manager.load()
+            state.status = "blocked"
+            state.iteration, state.tool_calls, state.token_budget_used, state.replans = 9, 5, 1234, 2
+            state.verified_reads = ["SPEC.md"]
+            state.verifications = {"verify": "digest"}
+            state.parse_failures = 5
+            manager.save(state)
+            config = root / "resume.toml"
+            config.write_text('[limits]\nmax_replans=40\n[runtime]\nfile_output_format="fenced"\n')
+            def no_inference(runtime):
+                resumed = runtime.manager.load()
+                self.assertEqual(resumed.status, "running")
+                self.assertEqual(resumed.goal, "Original goal")
+                self.assertEqual((resumed.iteration, resumed.tool_calls, resumed.token_budget_used, resumed.replans), (9, 5, 1234, 2))
+                self.assertEqual(resumed.verified_reads, ["SPEC.md"])
+                self.assertEqual(resumed.verifications, {"verify": "digest"})
+                self.assertEqual(resumed.parse_failures, 0)
+                self.assertEqual(resumed.limits.max_replans, 40)
+                self.assertEqual(resumed.options.file_output_format, "fenced")
+                return resumed
+            with patch("miniagent.cli.Runtime.run", no_inference), contextlib.redirect_stdout(io.StringIO()):
+                self.assertEqual(main(["resume", str(manager.run_dir), "--config", str(config), "--retry-blocked"]), 1)
+            events = [json.loads(line) for line in (manager.run_dir / "events.jsonl").read_text().splitlines()]
+            self.assertEqual(events[-1]["event"], "resume_configured")
+
     def test_status_and_resume_terminal_run_without_loading_model(self):
         with tempfile.TemporaryDirectory() as directory:
             manager = StateManager.create(Path(directory), "Inspect", ModelConfig(), RunLimits())

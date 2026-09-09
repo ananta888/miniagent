@@ -1,0 +1,1180 @@
+{
+  "purpose": "Selected development runs with changing runtime/prompts; not a controlled benchmark. No complete real-model success.",
+  "runs": [
+    {
+      "run_id": "f7f9777c4249",
+      "goal": "Create the Fibonacci Flask backend described in SPEC.md in app.py and requirements.txt. Run verify and fix any failing tests before finishing.",
+      "status": "blocked",
+      "iteration": 86,
+      "tool_calls": 64,
+      "token_budget_used": 30690,
+      "replans": 20,
+      "feedback": "Replan budget reached",
+      "metrics": {
+        "llm_calls": 43,
+        "parser_recoveries": 1,
+        "invalid_actions": 0,
+        "blocked_actions": 1,
+        "loop_detections": 0,
+        "failed_tools": 21,
+        "successful_tools": 43
+      },
+      "model_config_saved": {
+        "model": "Qwen/Qwen2.5-Coder-0.5B-Instruct",
+        "revision": "ea3f2471cf1b1f0db85067f1ef93848e38e88c25",
+        "max_new_tokens": 1536,
+        "max_context_tokens": 8192,
+        "temperature": 0.0,
+        "device": "auto",
+        "local_files_only": true,
+        "max_generation_seconds": 120.0
+      },
+      "limits": {
+        "max_iterations": 150,
+        "max_tool_calls": 120,
+        "max_tokens": 1000000,
+        "max_runtime_seconds": 3600.0,
+        "max_consecutive_failures": 10,
+        "max_parse_retries": 5,
+        "max_blocked_actions": 8,
+        "max_repeated_actions": 5,
+        "max_replans": 20
+      },
+      "options": {
+        "file_output_format": "fenced",
+        "repair_strategy": "rewrite",
+        "execute_plan": true
+      },
+      "runtime_seconds": 82.71,
+      "best_tests_passed": null,
+      "best_feedback": null,
+      "verification_exit_codes": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "resume_configuration_changes": [],
+      "current_sources_sha256": {
+        "requirements.txt": "1ecadf4ee8ca6c2e5e96ff436462dada6dca68cc91825b60e4c3201d5300d4d4",
+        "app.py": "f768ba1b83a89559b59a90b227f26fb938a04721aff272f41dd1667862de4bf9"
+      }
+    },
+    {
+      "run_id": "7343b1297428",
+      "goal": "Create the Fibonacci Flask backend described in SPEC.md in app.py and requirements.txt. Run verify and fix any failing tests before finishing.",
+      "status": "blocked",
+      "iteration": 87,
+      "tool_calls": 65,
+      "token_budget_used": 38973,
+      "replans": 20,
+      "feedback": "Replan budget reached",
+      "metrics": {
+        "llm_calls": 42,
+        "parser_recoveries": 0,
+        "invalid_actions": 0,
+        "blocked_actions": 1,
+        "loop_detections": 0,
+        "failed_tools": 21,
+        "successful_tools": 44
+      },
+      "model_config_saved": {
+        "model": "Qwen/Qwen2.5-Coder-0.5B-Instruct",
+        "revision": "ea3f2471cf1b1f0db85067f1ef93848e38e88c25",
+        "max_new_tokens": 1536,
+        "max_context_tokens": 8192,
+        "temperature": 0.0,
+        "device": "auto",
+        "local_files_only": true,
+        "max_generation_seconds": 120.0
+      },
+      "limits": {
+        "max_iterations": 150,
+        "max_tool_calls": 120,
+        "max_tokens": 1000000,
+        "max_runtime_seconds": 3600.0,
+        "max_consecutive_failures": 10,
+        "max_parse_retries": 5,
+        "max_blocked_actions": 8,
+        "max_repeated_actions": 5,
+        "max_replans": 20
+      },
+      "options": {
+        "file_output_format": "fenced",
+        "repair_strategy": "rewrite",
+        "execute_plan": true,
+        "planning_strategy": "files"
+      },
+      "runtime_seconds": 68.44,
+      "best_tests_passed": null,
+      "best_feedback": null,
+      "verification_exit_codes": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "resume_configuration_changes": [],
+      "current_sources_sha256": {
+        "requirements.txt": "49ad7845b53d4600cb349be21ff097f5a70f9a13aaa8384795dfab7d56513781",
+        "app.py": "c66ca9d6ac8b28ff115048492579834379578596b37a7cc72631ea5c1563a50d"
+      }
+    },
+    {
+      "run_id": "b99c2610b426",
+      "goal": "Create the Fibonacci Flask backend described in SPEC.md in app.py and requirements.txt. Run verify and fix any failing tests before finishing.",
+      "status": "blocked",
+      "iteration": 444,
+      "tool_calls": 288,
+      "token_budget_used": 198013,
+      "replans": 120,
+      "feedback": "Replan budget reached",
+      "metrics": {
+        "llm_calls": 197,
+        "parser_recoveries": 0,
+        "invalid_actions": 32,
+        "blocked_actions": 3,
+        "loop_detections": 0,
+        "failed_tools": 121,
+        "successful_tools": 167
+      },
+      "model_config_saved": {
+        "model": "Qwen/Qwen2.5-Coder-1.5B-Instruct",
+        "revision": "2e1fd397ee46e1388853d2af2c993145b0f1098a",
+        "max_new_tokens": 1536,
+        "max_context_tokens": 8192,
+        "temperature": 0.4,
+        "seed": 0,
+        "device": "auto",
+        "local_files_only": true,
+        "max_generation_seconds": 120.0
+      },
+      "limits": {
+        "max_iterations": 650,
+        "max_tool_calls": 500,
+        "max_tokens": 4000000,
+        "max_runtime_seconds": 7200.0,
+        "max_consecutive_failures": 10,
+        "max_parse_retries": 12,
+        "max_blocked_actions": 8,
+        "max_repeated_actions": 5,
+        "max_replans": 120
+      },
+      "options": {
+        "file_output_format": "fenced",
+        "repair_strategy": "rewrite",
+        "execute_plan": true,
+        "planning_strategy": "files",
+        "fresh_after": 3,
+        "keep_best": true,
+        "repair_edit": "file",
+        "repair_paths": [
+          "app.py"
+        ],
+        "repair_functions": {
+          "app.py": [
+            "validate_input",
+            "fibonacci"
+          ]
+        },
+        "prompt_artifact": null
+      },
+      "runtime_seconds": 1341.08,
+      "best_tests_passed": 9,
+      "best_feedback": "Command exited 1\nFAIL test_huge_input (__main__.FibonacciContract.test_huge_input)\nValueError: Exceeds the limit (4300 digits) for integer string conversion: value has 5000 digits; use sys.set_int_max_str_digits() to increase the limit\nFAIL test_leading_zeros (__main__.FibonacciContract.test_leading_zeros) (value='00000000000000000000')\nValueError: Exceeds the limit (4300 digits) for integer string conversion: value has 5000 digits; use sys.set_int_max_str_digits() to increase the limit\nFAIL test_repeated_argument (__main__.FibonacciContract.test_repeated_argument)\nAssertionError: 200 != 400 : GET /fibonacci query=[('n', '1'), ('n', '2')] must reject input with HTTP 400\n{\"tests_run\": 12, \"failures\": 1, \"errors\": 2}\n{\"miniagent_verification\": {\"tests_run\": 12, \"failures\": 1, \"errors\": 2, \"tests_passed\": 9}}\n",
+      "verification_exit_codes": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "resume_configuration_changes": [
+        {
+          "event": "resume_configured",
+          "timestamp": 1788949325.4722614,
+          "previous": {
+            "limits": {
+              "max_iterations": 250,
+              "max_tool_calls": 200,
+              "max_tokens": 2000000,
+              "max_runtime_seconds": 1800.0,
+              "max_consecutive_failures": 10,
+              "max_parse_retries": 8,
+              "max_blocked_actions": 8,
+              "max_repeated_actions": 5,
+              "max_replans": 40
+            },
+            "runtime": {
+              "file_output_format": "fenced",
+              "repair_strategy": "rewrite",
+              "execute_plan": true,
+              "planning_strategy": "files",
+              "fresh_after": 3,
+              "keep_best": true,
+              "repair_edit": "file"
+            },
+            "model": {
+              "model": "Qwen/Qwen2.5-Coder-1.5B-Instruct",
+              "revision": "2e1fd397ee46e1388853d2af2c993145b0f1098a",
+              "max_new_tokens": 1536,
+              "max_context_tokens": 8192,
+              "temperature": 0.4,
+              "seed": 0,
+              "device": "auto",
+              "local_files_only": true,
+              "max_generation_seconds": 120.0
+            }
+          },
+          "config": {
+            "limits": {
+              "max_replans": 80,
+              "max_iterations": 500,
+              "max_tool_calls": 400,
+              "max_tokens": 3000000,
+              "max_runtime_seconds": 3600.0,
+              "max_parse_retries": 12
+            },
+            "runtime": {
+              "repair_edit": "line"
+            },
+            "model": {
+              "temperature": 0.4
+            }
+          },
+          "retry_blocked": true
+        },
+        {
+          "event": "resume_configured",
+          "timestamp": 1788949487.4058225,
+          "previous": {
+            "limits": {
+              "max_iterations": 500,
+              "max_tool_calls": 400,
+              "max_tokens": 3000000,
+              "max_runtime_seconds": 3600.0,
+              "max_consecutive_failures": 10,
+              "max_parse_retries": 12,
+              "max_blocked_actions": 8,
+              "max_repeated_actions": 5,
+              "max_replans": 80
+            },
+            "runtime": {
+              "file_output_format": "fenced",
+              "repair_strategy": "rewrite",
+              "execute_plan": true,
+              "planning_strategy": "files",
+              "fresh_after": 3,
+              "keep_best": true,
+              "repair_edit": "line",
+              "repair_paths": []
+            },
+            "model": {
+              "model": "Qwen/Qwen2.5-Coder-1.5B-Instruct",
+              "revision": "2e1fd397ee46e1388853d2af2c993145b0f1098a",
+              "max_new_tokens": 1536,
+              "max_context_tokens": 8192,
+              "temperature": 0.4,
+              "seed": 0,
+              "device": "auto",
+              "local_files_only": true,
+              "max_generation_seconds": 120.0
+            }
+          },
+          "config": {
+            "limits": {
+              "max_replans": 80,
+              "max_iterations": 500,
+              "max_tool_calls": 400,
+              "max_tokens": 3000000,
+              "max_runtime_seconds": 5400.0,
+              "max_parse_retries": 12
+            },
+            "runtime": {
+              "repair_edit": "file",
+              "repair_paths": [
+                "app.py"
+              ]
+            },
+            "model": {
+              "temperature": 0.4
+            }
+          },
+          "retry_blocked": true
+        },
+        {
+          "event": "resume_configured",
+          "timestamp": 1788950064.4444356,
+          "previous": {
+            "limits": {
+              "max_iterations": 500,
+              "max_tool_calls": 400,
+              "max_tokens": 3000000,
+              "max_runtime_seconds": 5400.0,
+              "max_consecutive_failures": 10,
+              "max_parse_retries": 12,
+              "max_blocked_actions": 8,
+              "max_repeated_actions": 5,
+              "max_replans": 80
+            },
+            "runtime": {
+              "file_output_format": "fenced",
+              "repair_strategy": "rewrite",
+              "execute_plan": true,
+              "planning_strategy": "files",
+              "fresh_after": 3,
+              "keep_best": true,
+              "repair_edit": "file",
+              "repair_paths": [
+                "app.py"
+              ],
+              "repair_functions": {}
+            },
+            "model": {
+              "model": "Qwen/Qwen2.5-Coder-1.5B-Instruct",
+              "revision": "2e1fd397ee46e1388853d2af2c993145b0f1098a",
+              "max_new_tokens": 1536,
+              "max_context_tokens": 8192,
+              "temperature": 0.4,
+              "seed": 0,
+              "device": "auto",
+              "local_files_only": true,
+              "max_generation_seconds": 120.0
+            }
+          },
+          "config": {
+            "limits": {
+              "max_replans": 120,
+              "max_iterations": 650,
+              "max_tool_calls": 500,
+              "max_tokens": 4000000,
+              "max_runtime_seconds": 7200.0,
+              "max_parse_retries": 12
+            },
+            "runtime": {
+              "repair_edit": "file",
+              "repair_paths": [
+                "app.py"
+              ],
+              "repair_functions": {
+                "app.py": [
+                  "validate_input",
+                  "fibonacci"
+                ]
+              }
+            },
+            "model": {
+              "temperature": 0.4
+            }
+          },
+          "retry_blocked": true
+        },
+        {
+          "event": "resume_configured",
+          "timestamp": 1788950150.9498742,
+          "previous": {
+            "limits": {
+              "max_iterations": 650,
+              "max_tool_calls": 500,
+              "max_tokens": 4000000,
+              "max_runtime_seconds": 7200.0,
+              "max_consecutive_failures": 10,
+              "max_parse_retries": 12,
+              "max_blocked_actions": 8,
+              "max_repeated_actions": 5,
+              "max_replans": 120
+            },
+            "runtime": {
+              "file_output_format": "fenced",
+              "repair_strategy": "rewrite",
+              "execute_plan": true,
+              "planning_strategy": "files",
+              "fresh_after": 3,
+              "keep_best": true,
+              "repair_edit": "file",
+              "repair_paths": [
+                "app.py"
+              ],
+              "repair_functions": {
+                "app.py": [
+                  "validate_input",
+                  "fibonacci"
+                ]
+              },
+              "prompt_artifact": null
+            },
+            "model": {
+              "model": "Qwen/Qwen2.5-Coder-1.5B-Instruct",
+              "revision": "2e1fd397ee46e1388853d2af2c993145b0f1098a",
+              "max_new_tokens": 1536,
+              "max_context_tokens": 8192,
+              "temperature": 0.4,
+              "seed": 0,
+              "device": "auto",
+              "local_files_only": true,
+              "max_generation_seconds": 120.0
+            }
+          },
+          "config": {},
+          "retry_blocked": true
+        }
+      ],
+      "current_sources_sha256": {
+        "requirements.txt": "e9eae9074f097c101b125118dcd281694b2df5425064ab983bb2ca54cf50bea3",
+        "app.py": "457037e1fd71e6c65188b4222fb3c7b924ab05f11219b9079883b590c2fdc585"
+      }
+    },
+    {
+      "run_id": "e9560d66649b",
+      "goal": "Create the Fibonacci Flask backend described in SPEC.md in app.py and requirements.txt. Run verify and fix any failing tests before finishing.",
+      "status": "blocked",
+      "iteration": 142,
+      "tool_calls": 77,
+      "token_budget_used": 80044,
+      "replans": 37,
+      "feedback": "Parse retry limit reached",
+      "metrics": {
+        "llm_calls": 65,
+        "parser_recoveries": 0,
+        "invalid_actions": 27,
+        "blocked_actions": 0,
+        "loop_detections": 0,
+        "failed_tools": 37,
+        "successful_tools": 40
+      },
+      "model_config_saved": {
+        "model": "Qwen/Qwen2.5-Coder-0.5B-Instruct",
+        "revision": "ea3f2471cf1b1f0db85067f1ef93848e38e88c25",
+        "max_new_tokens": 1536,
+        "max_context_tokens": 8192,
+        "temperature": 0.7,
+        "seed": 0,
+        "device": "auto",
+        "local_files_only": true,
+        "max_generation_seconds": 120.0
+      },
+      "limits": {
+        "max_iterations": 250,
+        "max_tool_calls": 200,
+        "max_tokens": 2000000,
+        "max_runtime_seconds": 5400.0,
+        "max_consecutive_failures": 10,
+        "max_parse_retries": 12,
+        "max_blocked_actions": 8,
+        "max_repeated_actions": 5,
+        "max_replans": 40
+      },
+      "options": {
+        "file_output_format": "fenced",
+        "repair_strategy": "rewrite",
+        "execute_plan": true,
+        "planning_strategy": "files",
+        "fresh_after": 3,
+        "keep_best": true,
+        "repair_edit": "file",
+        "repair_paths": [
+          "app.py"
+        ]
+      },
+      "runtime_seconds": 464.1,
+      "best_tests_passed": 3,
+      "best_feedback": "Command exited 1\nFAIL test_huge_input (__main__.FibonacciContract.test_huge_input)\nValueError: Exceeds the limit (4300 digits) for integer string conversion: value has 5000 digits; use sys.set_int_max_str_digits() to increase the limit\nFAIL test_leading_zeros (__main__.FibonacciContract.test_leading_zeros) (value='00000000000000000000')\nValueError: Exceeds the limit (4300 digits) for integer string conversion: value has 5000 digits; use sys.set_int_max_str_digits() to increase the limit\nFAIL test_independent_requests (__main__.FibonacciContract.test_independent_requests)\nAssertionError: {'value': 0} != {'n': 0, 'value': 0}\n- {'value': 0}\n+ {'n': 0, 'value': 0}\n?  ++++++++\n{\"tests_run\": 12, \"failures\": 24, \"errors\": 2}\n{\"miniagent_verification\": {\"tests_run\": 12, \"failures\": 24, \"errors\": 2, \"tests_passed\": 3}}\n",
+      "verification_exit_codes": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "resume_configuration_changes": [
+        {
+          "event": "resume_configured",
+          "timestamp": 1788949596.3791592,
+          "previous": {
+            "limits": {
+              "max_iterations": 250,
+              "max_tool_calls": 200,
+              "max_tokens": 2000000,
+              "max_runtime_seconds": 1800.0,
+              "max_consecutive_failures": 10,
+              "max_parse_retries": 8,
+              "max_blocked_actions": 8,
+              "max_repeated_actions": 5,
+              "max_replans": 40
+            },
+            "runtime": {
+              "file_output_format": "fenced",
+              "repair_strategy": "rewrite",
+              "execute_plan": true,
+              "planning_strategy": "files",
+              "fresh_after": 3,
+              "keep_best": true,
+              "repair_edit": "file",
+              "repair_paths": [
+                "app.py"
+              ]
+            },
+            "model": {
+              "model": "Qwen/Qwen2.5-Coder-0.5B-Instruct",
+              "revision": "ea3f2471cf1b1f0db85067f1ef93848e38e88c25",
+              "max_new_tokens": 1536,
+              "max_context_tokens": 8192,
+              "temperature": 0.7,
+              "seed": 0,
+              "device": "auto",
+              "local_files_only": true,
+              "max_generation_seconds": 120.0
+            }
+          },
+          "config": {
+            "limits": {
+              "max_parse_retries": 12,
+              "max_runtime_seconds": 5400.0
+            },
+            "runtime": {
+              "repair_paths": [
+                "app.py"
+              ],
+              "repair_edit": "file"
+            }
+          },
+          "retry_blocked": true
+        }
+      ],
+      "current_sources_sha256": {
+        "requirements.txt": "f6d51238894915cfa5f35532c8ed0875a8b75b5e1e0c859548f0bb821a6a6744",
+        "app.py": "e0da45d64927707575ef6163edb0784abfff816b38be98b943b88d16ba63797d"
+      }
+    },
+    {
+      "run_id": "7f75388d7a2c",
+      "goal": "Create the Fibonacci Flask backend described in SPEC.md in app.py and requirements.txt. Run verify and fix any failing tests before finishing.",
+      "status": "blocked",
+      "iteration": 128,
+      "tool_calls": 85,
+      "token_budget_used": 50631,
+      "replans": 40,
+      "feedback": "Replan budget reached",
+      "metrics": {
+        "llm_calls": 43,
+        "parser_recoveries": 0,
+        "invalid_actions": 1,
+        "blocked_actions": 1,
+        "loop_detections": 0,
+        "failed_tools": 41,
+        "successful_tools": 44
+      },
+      "model_config_saved": {
+        "model": "Qwen/Qwen2.5-Coder-0.5B-Instruct",
+        "revision": "ea3f2471cf1b1f0db85067f1ef93848e38e88c25",
+        "max_new_tokens": 1536,
+        "max_context_tokens": 8192,
+        "temperature": 0.4,
+        "seed": 0,
+        "device": "auto",
+        "local_files_only": true,
+        "max_generation_seconds": 120.0
+      },
+      "limits": {
+        "max_iterations": 250,
+        "max_tool_calls": 200,
+        "max_tokens": 2000000,
+        "max_runtime_seconds": 1800.0,
+        "max_consecutive_failures": 10,
+        "max_parse_retries": 8,
+        "max_blocked_actions": 8,
+        "max_repeated_actions": 5,
+        "max_replans": 40
+      },
+      "options": {
+        "file_output_format": "fenced",
+        "repair_strategy": "rewrite",
+        "execute_plan": true,
+        "planning_strategy": "files",
+        "fresh_after": 3,
+        "keep_best": true,
+        "repair_edit": "file",
+        "repair_paths": [
+          "app.py"
+        ],
+        "repair_functions": {},
+        "prompt_artifact": "artifacts/prompt-3cd26c5ba9a9893a.json"
+      },
+      "runtime_seconds": 138.13,
+      "best_tests_passed": 5,
+      "best_feedback": "Command exited 1\nFAIL test_independent_requests (__main__.FibonacciContract.test_independent_requests)\nAssertionError: {'value': 0} != {'n': 0, 'value': 0}\n- {'value': 0}\n+ {'n': 0, 'value': 0}\n?  ++++++++\nFAIL test_invalid_values (__main__.FibonacciContract.test_invalid_values) (value='1001')\nAssertionError: 200 != 400 : GET /fibonacci query={'n': '1001'} must reject input with HTTP 400\nFAIL test_invalid_values (__main__.FibonacciContract.test_invalid_values) (value='+1')\nAssertionError: 200 != 400 : GET /fibonacci query={'n': '+1'} must reject input with HTTP 400\n{\"tests_run\": 12, \"failures\": 19, \"errors\": 0}\n{\"miniagent_verification\": {\"tests_run\": 12, \"failures\": 19, \"errors\": 0, \"tests_passed\": 5}}\n",
+      "verification_exit_codes": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "resume_configuration_changes": [],
+      "current_sources_sha256": {
+        "requirements.txt": "f6d51238894915cfa5f35532c8ed0875a8b75b5e1e0c859548f0bb821a6a6744",
+        "app.py": "a40b1d3878f924e329689bcee818798185f35df8c345443212a5e223ddf75e83"
+      }
+    },
+    {
+      "run_id": "a2842eb5a2c2",
+      "goal": "Create the Fibonacci Flask backend described in SPEC.md in app.py and requirements.txt. Run verify and fix any failing tests before finishing.",
+      "status": "blocked",
+      "iteration": 136,
+      "tool_calls": 85,
+      "token_budget_used": 88190,
+      "replans": 40,
+      "feedback": "Replan budget reached",
+      "metrics": {
+        "llm_calls": 51,
+        "parser_recoveries": 0,
+        "invalid_actions": 9,
+        "blocked_actions": 1,
+        "loop_detections": 0,
+        "failed_tools": 41,
+        "successful_tools": 44
+      },
+      "model_config_saved": {
+        "model": "Qwen/Qwen2.5-Coder-0.5B-Instruct",
+        "revision": "ea3f2471cf1b1f0db85067f1ef93848e38e88c25",
+        "max_new_tokens": 1536,
+        "max_context_tokens": 8192,
+        "temperature": 0.4,
+        "seed": 0,
+        "device": "auto",
+        "local_files_only": true,
+        "max_generation_seconds": 120.0
+      },
+      "limits": {
+        "max_iterations": 250,
+        "max_tool_calls": 200,
+        "max_tokens": 2000000,
+        "max_runtime_seconds": 1800.0,
+        "max_consecutive_failures": 10,
+        "max_parse_retries": 8,
+        "max_blocked_actions": 8,
+        "max_repeated_actions": 5,
+        "max_replans": 40
+      },
+      "options": {
+        "file_output_format": "fenced",
+        "repair_strategy": "rewrite",
+        "execute_plan": true,
+        "planning_strategy": "files",
+        "fresh_after": 3,
+        "keep_best": true,
+        "repair_edit": "file",
+        "repair_paths": [
+          "app.py"
+        ],
+        "repair_functions": {},
+        "prompt_artifact": "artifacts/prompt-88d8955410794cf6.json"
+      },
+      "runtime_seconds": 240.39,
+      "best_tests_passed": 7,
+      "best_feedback": "Command exited 1\nFAIL test_missing (__main__.FibonacciContract.test_missing)\nTypeError: int() argument must be a string, a bytes-like object or a real number, not 'NoneType'\nFAIL test_invalid_values (__main__.FibonacciContract.test_invalid_values) (value='1001')\nAssertionError: 200 != 400 : GET /fibonacci query={'n': '1001'} must reject input with HTTP 400\nFAIL test_invalid_values (__main__.FibonacciContract.test_invalid_values) (value='+1')\nAssertionError: 200 != 400 : GET /fibonacci query={'n': '+1'} must reject input with HTTP 400\n{\"tests_run\": 12, \"failures\": 9, \"errors\": 1}\n{\"miniagent_verification\": {\"tests_run\": 12, \"failures\": 9, \"errors\": 1, \"tests_passed\": 7}}\n",
+      "verification_exit_codes": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "resume_configuration_changes": [
+        {
+          "event": "resume_configured",
+          "timestamp": 1788950960.7887182,
+          "previous": {
+            "limits": {
+              "max_iterations": 250,
+              "max_tool_calls": 200,
+              "max_tokens": 2000000,
+              "max_runtime_seconds": 1800.0,
+              "max_consecutive_failures": 10,
+              "max_parse_retries": 8,
+              "max_blocked_actions": 8,
+              "max_repeated_actions": 5,
+              "max_replans": 40
+            },
+            "runtime": {
+              "file_output_format": "fenced",
+              "repair_strategy": "rewrite",
+              "execute_plan": true,
+              "planning_strategy": "files",
+              "fresh_after": 3,
+              "keep_best": true,
+              "repair_edit": "file",
+              "repair_paths": [
+                "app.py"
+              ],
+              "repair_functions": {},
+              "prompt_artifact": "artifacts/prompt-88d8955410794cf6.json"
+            },
+            "model": {
+              "model": "Qwen/Qwen2.5-Coder-0.5B-Instruct",
+              "revision": "ea3f2471cf1b1f0db85067f1ef93848e38e88c25",
+              "max_new_tokens": 1536,
+              "max_context_tokens": 8192,
+              "temperature": 0.4,
+              "seed": 0,
+              "device": "auto",
+              "local_files_only": true,
+              "max_generation_seconds": 120.0
+            }
+          },
+          "config": {},
+          "retry_blocked": true
+        }
+      ],
+      "current_sources_sha256": {
+        "requirements.txt": "49ad7845b53d4600cb349be21ff097f5a70f9a13aaa8384795dfab7d56513781",
+        "app.py": "bf0bd007a83b3f0c9bfd957d9c20b2d30730b1ec89112ce64d16ce0e3b4a7400"
+      }
+    },
+    {
+      "run_id": "1503b853e6d1",
+      "goal": "Create the Fibonacci Flask backend described in SPEC.md in app.py and requirements.txt. Run verify and fix any failing tests before finishing.",
+      "status": "blocked",
+      "iteration": 188,
+      "tool_calls": 125,
+      "token_budget_used": 86369,
+      "replans": 60,
+      "feedback": "Replan budget reached",
+      "metrics": {
+        "llm_calls": 63,
+        "parser_recoveries": 20,
+        "invalid_actions": 0,
+        "blocked_actions": 2,
+        "loop_detections": 0,
+        "failed_tools": 61,
+        "successful_tools": 64
+      },
+      "model_config_saved": {
+        "model": "Qwen/Qwen2.5-Coder-0.5B-Instruct",
+        "revision": "ea3f2471cf1b1f0db85067f1ef93848e38e88c25",
+        "max_new_tokens": 1536,
+        "max_context_tokens": 8192,
+        "temperature": 0.4,
+        "seed": 0,
+        "device": "auto",
+        "local_files_only": true,
+        "max_generation_seconds": 120.0
+      },
+      "limits": {
+        "max_iterations": 250,
+        "max_tool_calls": 200,
+        "max_tokens": 2000000,
+        "max_runtime_seconds": 3600.0,
+        "max_consecutive_failures": 10,
+        "max_parse_retries": 8,
+        "max_blocked_actions": 8,
+        "max_repeated_actions": 5,
+        "max_replans": 60
+      },
+      "options": {
+        "file_output_format": "fenced",
+        "repair_strategy": "rewrite",
+        "execute_plan": true,
+        "planning_strategy": "files",
+        "fresh_after": 3,
+        "keep_best": true,
+        "repair_edit": "line",
+        "repair_paths": [
+          "app.py"
+        ],
+        "repair_functions": {},
+        "prompt_artifact": "",
+        "file_tasks": {
+          "logic.py": "Write the Python function fibonacci(n). Return F(n), with F(0)=0 and F(1)=1. Support n=1000 using linear time, without recursion. Return only the complete function in one python code fence.",
+          "app.py": "Write app.py with Flask instance app. Import fibonacci from logic; the calculation is already implemented. GET /health returns JSON {\"status\":\"ok\"}. GET /fibonacci?n=10 returns JSON {\"n\":10,\"value\":55}. Read n exactly once with request.args.getlist. Accept ASCII decimal digits and numeric values 0 through 1000. Leading zeros are allowed, even 5000 zeros. Strip leading zeros before bounding the significant digits and converting to int. Missing, empty, repeated, non-ASCII, negative, signed, fractional or out-of-range input returns JSON error with HTTP 400. Call fibonacci(n) and return jsonify(n=n, value=result). Do not implement the calculation in this file. Do not start a server during import. Return only the complete file in one python code fence."
+        }
+      },
+      "runtime_seconds": 480.11,
+      "best_tests_passed": 7,
+      "best_feedback": "Command exited 1\nFAIL test_independent_requests (__main__.FibonacciContract.test_independent_requests)\nNameError: name 'fibonacci' is not defined\nFAIL test_known_values (__main__.FibonacciContract.test_known_values) (n=2)\nNameError: name 'fibonacci' is not defined\nFAIL test_known_values (__main__.FibonacciContract.test_known_values) (n=3)\nNameError: name 'fibonacci' is not defined\n{\"tests_run\": 12, \"failures\": 2, \"errors\": 7}\n{\"miniagent_verification\": {\"tests_run\": 12, \"failures\": 2, \"errors\": 7, \"tests_passed\": 7}}\n",
+      "verification_exit_codes": [
+        -9,
+        -9,
+        -9,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        -9,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        -9,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        -9,
+        1,
+        1,
+        1,
+        1,
+        -9,
+        -9,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "resume_configuration_changes": [
+        {
+          "event": "resume_configured",
+          "timestamp": 1788951404.1128821,
+          "previous": {
+            "limits": {
+              "max_iterations": 250,
+              "max_tool_calls": 200,
+              "max_tokens": 2000000,
+              "max_runtime_seconds": 1800.0,
+              "max_consecutive_failures": 10,
+              "max_parse_retries": 8,
+              "max_blocked_actions": 8,
+              "max_repeated_actions": 5,
+              "max_replans": 40
+            },
+            "runtime": {
+              "file_output_format": "fenced",
+              "repair_strategy": "rewrite",
+              "execute_plan": true,
+              "planning_strategy": "files",
+              "fresh_after": 3,
+              "keep_best": true,
+              "repair_edit": "file",
+              "repair_paths": [
+                "app.py"
+              ],
+              "repair_functions": {},
+              "prompt_artifact": "artifacts/prompt-9dd2e565324a5c32.json",
+              "file_tasks": {
+                "logic.py": "Write the Python function fibonacci(n). Return F(n), with F(0)=0 and F(1)=1. Support n=1000 using linear time, without recursion. Return only the complete function in one python code fence.",
+                "app.py": "Write app.py with Flask instance app. Import fibonacci from logic; the calculation is already implemented. GET /health returns JSON {\"status\":\"ok\"}. GET /fibonacci?n=10 returns JSON {\"n\":10,\"value\":55}. Read n exactly once with request.args.getlist. Accept ASCII decimal digits and numeric values 0 through 1000. Leading zeros are allowed, even 5000 zeros. Strip leading zeros before bounding the significant digits and converting to int. Missing, empty, repeated, non-ASCII, negative, signed, fractional or out-of-range input returns JSON error with HTTP 400. Call fibonacci(n) and return jsonify(n=n, value=result). Do not implement the calculation in this file. Do not start a server during import. Return only the complete file in one python code fence."
+              }
+            },
+            "model": {
+              "model": "Qwen/Qwen2.5-Coder-0.5B-Instruct",
+              "revision": "ea3f2471cf1b1f0db85067f1ef93848e38e88c25",
+              "max_new_tokens": 1536,
+              "max_context_tokens": 8192,
+              "temperature": 0.4,
+              "seed": 0,
+              "device": "auto",
+              "local_files_only": true,
+              "max_generation_seconds": 120.0
+            }
+          },
+          "config": {
+            "limits": {
+              "max_replans": 60,
+              "max_iterations": 250,
+              "max_tool_calls": 200,
+              "max_runtime_seconds": 3600.0
+            },
+            "runtime": {
+              "prompt_artifact": "",
+              "repair_edit": "line"
+            }
+          },
+          "retry_blocked": true
+        }
+      ],
+      "current_sources_sha256": {
+        "requirements.txt": "1ecadf4ee8ca6c2e5e96ff436462dada6dca68cc91825b60e4c3201d5300d4d4",
+        "logic.py": "8ab03afae5e3563edf9c7b9d9f23eb236842966ad0a716907846d0b2b7fb451b",
+        "app.py": "9fab4b64b3ee3071d801375e2801a239d63f236022b1c95da419646c21090d23"
+      }
+    }
+  ]
+}

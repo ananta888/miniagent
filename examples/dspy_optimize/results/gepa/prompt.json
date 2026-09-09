@@ -1,0 +1,12 @@
+{
+  "version": 1,
+  "instructions": "Write correct Python code for the requested function. Return one python code fence.",
+  "input_fields": [
+    "task"
+  ],
+  "output_field": "response",
+  "demos": [],
+  "file_suffixes": [
+    ".py"
+  ]
+}

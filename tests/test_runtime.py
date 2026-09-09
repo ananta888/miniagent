@@ -69,9 +69,10 @@ class RuntimeTests(unittest.TestCase):
         self.assertIn("could not be parsed", model.prompts[1])
 
     def test_parse_retries_bounded(self):
-        state, model = self.run_responses(["bad"] * 4)
+        limit = self.manager.load().limits.max_parse_retries
+        state, model = self.run_responses(["bad"] * (limit + 1))
         self.assertEqual(state.status, "blocked")
-        self.assertEqual(len(model.prompts), 3)
+        self.assertEqual(len(model.prompts), limit + 1)
         self.assertEqual(state.tool_calls, 0)
 
     def test_premature_final_blocked_then_recovered(self):

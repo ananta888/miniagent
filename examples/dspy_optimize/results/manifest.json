@@ -1,0 +1,29 @@
+{
+  "purpose": "Development experiments; one seed and three final function tasks, not a statistical benchmark.",
+  "model": "Qwen/Qwen2.5-Coder-0.5B-Instruct",
+  "revision": "ea3f2471cf1b1f0db85067f1ef93848e38e88c25",
+  "environment": {
+    "python": "3.12",
+    "torch": "2.6.0+cu124",
+    "transformers": "4.57.6",
+    "dspy": "3.3.1",
+    "gpu": "NVIDIA RTX 3080 10GB"
+  },
+  "runs": {
+    "bootstrap": "dspy-bootstrap-final",
+    "gepa": "dspy-gepa-final",
+    "api_bootstrap": "dspy-api-01"
+  },
+  "notes": [
+    "Bootstrap and GEPA were repeated after the ProgramAdapter integration.",
+    "API bootstrap used supplied generic square/double API labels; final scoring still uses function tasks.",
+    "The API bootstrap run predates the exported file_suffixes field; its absent field defaults to [.py] on load.",
+    "Datasets and runtime prompts were adjusted during development. Optimizers do not receive the final testset."
+  ],
+  "source_sha256": {
+    "examples/dspy_optimize/api_tasks.py": "3d0f78def01350b2f20cdcc0e314b39eefb8a8d55574383276d5d894713a8042",
+    "examples/dspy_optimize/demo.py": "9ff3343da17c63f417939190520aedc8a4c742d8da24926b1aa80e5ab5d7ef96",
+    "examples/dspy_optimize/verify_api.py": "296f1e3cfc78c6e1e8aa49fb874eeaf6fcdc7086dace24c0a177c79f26446f01",
+    "examples/dspy_optimize/verify_function.py": "4c50ed22b9536db6086a56aed29fa4e062564e317ca04fa658f78ffb13c6eeec"
+  }
+}

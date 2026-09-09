@@ -13,6 +13,7 @@ class ModelConfig(StrictModel):
     max_new_tokens: int = Field(default=512, ge=1, le=4096)
     max_context_tokens: int = Field(default=4096, ge=128, le=32768)
     temperature: float = Field(default=0.0, ge=0, le=2)
+    seed: int = Field(default=0, ge=0, le=2147483647)
     device: Literal["auto", "cpu", "cuda"] = "auto"
     local_files_only: bool = True
     max_generation_seconds: float = Field(default=120.0, gt=0)
@@ -24,10 +25,31 @@ class RunLimits(StrictModel):
     max_tokens: int = Field(default=100_000, ge=1)
     max_runtime_seconds: float = Field(default=3600.0, gt=0)
     max_consecutive_failures: int = Field(default=3, ge=1)
-    max_parse_retries: int = Field(default=2, ge=0)
+    max_parse_retries: int = Field(default=5, ge=0)
     max_blocked_actions: int = Field(default=3, ge=1)
     max_repeated_actions: int = Field(default=3, ge=1)
-    max_replans: Annotated[int, Field(ge=0)] | Literal["unlimited"] = 2
+    max_replans: Annotated[int, Field(ge=0)] | Literal["unlimited"] = 20
+
+
+class RuntimeOptions(StrictModel):
+    file_output_format: Literal["json", "fenced"] = "json"
+    repair_strategy: Literal["model", "rewrite"] = "model"
+    execute_plan: bool = False
+    planning_strategy: Literal["model", "files"] = "model"
+    fresh_after: int = Field(default=3, ge=1)
+    keep_best: bool = False
+    repair_edit: Literal["file", "line"] = "file"
+    repair_paths: list[str] = Field(default_factory=list, max_length=12)
+    repair_functions: dict[str, list[str]] = Field(default_factory=dict)
+    prompt_artifact: str | None = None
+    file_tasks: dict[str, str] = Field(default_factory=dict)
+
+
+class Checkpoint(StrictModel):
+    passed: int = Field(ge=0)
+    failures: int = Field(ge=0)
+    files: dict[str, str]
+    feedback: str
 
 
 class ToolPolicy(StrictModel):
@@ -118,6 +140,7 @@ class AgentState(StrictModel):
     model_config_saved: ModelConfig = Field(default_factory=ModelConfig)
     limits: RunLimits = Field(default_factory=RunLimits)
     policy: ToolPolicy = Field(default_factory=ToolPolicy)
+    options: RuntimeOptions = Field(default_factory=RuntimeOptions)
     iteration: int = Field(default=0, ge=0)
     steps: list[StepState] = Field(default_factory=list)
     # User-selected evidence requirements; the model cannot change these.
@@ -137,6 +160,10 @@ class AgentState(StrictModel):
     tool_calls: int = 0
     pending_action: ToolAction | None = None
     feedback: str | None = None
+    repair_feedback: str | None = None
+    last_failed_verification: str | None = None
+    stalled_verifications: int = 0
+    best_attempt: Checkpoint | None = None
     answer: str | None = None
     metrics: Metrics = Field(default_factory=Metrics)
 

@@ -16,7 +16,7 @@ class ObservationStore:
         atomic_write(self.run_dir / reference, raw + "\n")
         # Truncated output is useful context but insufficient evidence to finish a step.
         complete = result.success and not result.metadata.get("truncated", False)
-        summary = result.output[:1200] if result.success else ((result.error or "Tool failed") + "\n" + result.output[-1100:])
+        summary = result.output[:1200] if result.success else ((result.error or "Tool failed") + "\n" + result.output[-3000:])
         if not complete and result.success:
             summary += "\n[TRUNCATED: cannot verify this step]"
         observation = Observation(

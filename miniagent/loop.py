@@ -2,22 +2,25 @@ import time
 from pathlib import Path
 
 from miniagent.execution.executor import Executor
+from miniagent.execution.checkpoints import keep_checkpoint
 from miniagent.gates.pipeline import GatePipeline, GateResult, blocked, signature
 from miniagent.logging.events import EventLog
 from miniagent.model.base import ModelBackend, ModelResponse
-from miniagent.parsing.json_parser import ParseError, ParserPipeline
+from miniagent.parsing.json_parser import ParseError
+from miniagent.parsing.action_parser import ActionParser
 from miniagent.planning.planner import Planner
-from miniagent.prompts.builder import PromptBuilder
+from miniagent.prompts.strategy import PromptStrategy
 from miniagent.state.context import ContextBuilder
 from miniagent.state.files import atomic_write
 from miniagent.state.manager import StateManager
-from miniagent.state.models import AgentState, FinalAction, Observation, PlanAction, ToolAction
+from miniagent.state.models import Action, AgentState, FinalAction, Observation, PlanAction, ToolAction
 from miniagent.state.observations import ObservationStore
+from miniagent.tools.base import workspace_digest
 
 
 class AgentLoop:
-    def __init__(self, manager: StateManager, model: ModelBackend, parser: ParserPipeline,
-                 gates: GatePipeline, executor: Executor, prompts: PromptBuilder):
+    def __init__(self, manager: StateManager, model: ModelBackend, parser: ActionParser,
+                 gates: GatePipeline, executor: Executor, prompts: PromptStrategy):
         self.manager = manager
         self.model = model
         self.parser = parser
@@ -25,7 +28,7 @@ class AgentLoop:
         self.executor = executor
         self.prompts = prompts
         self.observations = ObservationStore(manager.run_dir)
-        self.context = ContextBuilder(self.observations)
+        self.context = ContextBuilder(self.observations, executor.context)
         self.events = EventLog(manager.run_dir)
         self.planner = Planner()
 
@@ -42,14 +45,25 @@ class AgentLoop:
         if state.pending_action is not None:
             self.recover_tool(state)
         while state.status == "running":
-            if not self.model_budget_available(state):
+            try:
+                proposal = self.runtime_proposal(state)
+            except ValueError as error:
+                self.stop(state, f"Invalid configured plan: {error}")
                 break
-            prompt = self.prompts.build(state, self.context.build(state))
-            response = self.call_model(state, prompt)
+            if not self.model_budget_available(state, needs_model=proposal is None):
+                break
+            context = self.context.build(state) if proposal is None else {}
+            if proposal is not None:
+                state.iteration += 1
+                self.events.emit("runtime_proposal", iteration=state.iteration, kind=proposal.type)
+                response = ModelResponse(text=proposal.model_dump_json(), input_tokens=0, output_tokens=0)
+            else:
+                prompt = self.prompts.build(state, context)
+                response = self.call_model(state, prompt)
             if response is None:
                 break
             try:
-                action = self.parser.parse(response.text)
+                action = self.parser.parse(response.text, state, context)
             except ParseError as error:
                 state.metrics.invalid_actions += 1
                 state.parse_failures += 1
@@ -66,7 +80,7 @@ class AgentLoop:
             if self.parser.recovered:
                 state.metrics.parser_recoveries += 1
                 self.events.emit("parser_recovered", iteration=state.iteration)
-            self.events.emit("action_parsed", iteration=state.iteration, action=action.model_dump())
+            self.events.emit("action_parsed", iteration=state.iteration, parser=self.parser.method, action=action.model_dump())
             decision = self.gates.check(action, state)
             if decision.allowed and isinstance(action, PlanAction):
                 decision = self.validate_plan(action, state)
@@ -99,9 +113,23 @@ class AgentLoop:
                 self.events.emit("run_completed", answer=state.answer)
         return state
 
-    def model_budget_available(self, state: AgentState) -> bool:
+    def runtime_proposal(self, state: AgentState) -> Action | None:
+        if not state.steps and state.options.planning_strategy == "files":
+            return self.planner.initial(state)
+        if (state.needs_replan and state.options.repair_strategy == "rewrite"
+                and state.policy.write_paths and state.policy.required_verifications):
+            return self.planner.repair(state)
+        if state.options.execute_plan and not state.needs_replan:
+            if state.steps and state.current_step is None:
+                return FinalAction(type="final", answer="All planned steps completed with required verification.")
+            if state.current_step and state.current_step.proposal.tool != "write_file":
+                step = state.current_step.proposal
+                return ToolAction(type="tool", tool=step.tool, arguments=step.arguments)
+        return None
+
+    def model_budget_available(self, state: AgentState, *, needs_model: bool = True) -> bool:
         config, limits = state.model_config_saved, state.limits
-        reservation = config.max_context_tokens + config.max_new_tokens
+        reservation = config.max_context_tokens + config.max_new_tokens if needs_model else 0
         reason = None
         if time.time() - state.started_at >= limits.max_runtime_seconds:
             reason = "Runtime deadline reached"
@@ -242,13 +270,31 @@ class AgentLoop:
                 state.required_read_summaries.pop(path, None)
             elif action.tool == "shell" and observation.exit_code == 0 and observation.verification_digest:
                 state.verifications[action.arguments["command"]] = observation.verification_digest
+                state.repair_feedback = None
+                state.last_failed_verification = None
+                state.stalled_verifications = 0
             state.feedback = None
         else:
             state.needs_replan = True
             state.metrics.failed_tools += 1
             state.consecutive_failures += 1
             state.feedback = observation.summary
+            state.repair_feedback = observation.summary
             if action.tool == "shell":
                 state.verifications.pop(action.arguments["command"], None)
+                try:
+                    fingerprint = workspace_digest(self.executor.context) + observation.result_hash
+                except (ValueError, OSError, RuntimeError):
+                    fingerprint = observation.result_hash
+                state.stalled_verifications = state.stalled_verifications + 1 if fingerprint == state.last_failed_verification else 1
+                state.last_failed_verification = fingerprint
+                if state.stalled_verifications >= state.options.fresh_after:
+                    self.events.emit("repair_stalled", iteration=state.iteration, count=state.stalled_verifications)
         state.pending_action = None
+        if action.tool == "shell":
+            try:
+                if keep_checkpoint(state, observation, self.manager.run_dir, self.executor.context):
+                    self.events.emit("checkpoint_saved", iteration=state.iteration, passed=state.best_attempt.passed)
+            except (OSError, ValueError, RuntimeError) as error:
+                self.events.emit("checkpoint_unavailable", reason=str(error)[:400])
         self.manager.save(state)

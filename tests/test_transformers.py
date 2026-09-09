@@ -34,5 +34,9 @@ class TransformersTests(unittest.TestCase):
             self.assertEqual(response.input_tokens, 3)
             self.assertGreaterEqual(response.output_tokens, 1)
             self.assertLessEqual(response.output_tokens, 2)
+            backend.config.temperature = 0.7
+            first = backend.generate("hello")
+            second = backend.generate("hello")
+            self.assertEqual(first.text, second.text)
             with self.assertRaisesRegex(ValueError, "Context has"):
                 backend.generate("hello " * 150)

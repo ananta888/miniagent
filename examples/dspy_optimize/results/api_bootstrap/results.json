@@ -1,0 +1,45 @@
+{
+  "strategy": "bootstrap",
+  "model": {
+    "model": "Qwen/Qwen2.5-Coder-0.5B-Instruct",
+    "revision": "ea3f2471cf1b1f0db85067f1ef93848e38e88c25",
+    "max_new_tokens": 1024,
+    "max_context_tokens": 8192,
+    "temperature": 0.4,
+    "seed": 0,
+    "device": "auto",
+    "local_files_only": true,
+    "max_generation_seconds": 120.0
+  },
+  "dspy_version": "3.3.1",
+  "train": [
+    "square",
+    "double",
+    "factorial(n)"
+  ],
+  "validation": [
+    "parse_small_int(text)"
+  ],
+  "test": [
+    "square(x)",
+    "sum_list(values)",
+    "fibonacci(n)"
+  ],
+  "baseline_score": 66.67,
+  "optimized_score": 100.0,
+  "baseline_tasks": [
+    1.0,
+    1.0,
+    0.0
+  ],
+  "optimized_tasks": [
+    1.0,
+    1.0,
+    1.0
+  ],
+  "lm_calls": 9,
+  "tokens": 4908,
+  "seconds": 14.93,
+  "demos": 3,
+  "instructions": "Write correct Python code for the requested function. Return one python code fence."
+}

@@ -2,12 +2,12 @@
 
 Lizenz: [BSD-3-Clause](LICENSE).
 
-Ein kleiner Python-Runtime-Kern für lokale Modelle mit etwa 2–8B Parametern,
+Ein kleiner Python-Runtime-Kern für lokale Modelle, auch deutlich unter 2B Parametern,
 insbesondere Phi-3.5 Mini. Das Modell schlägt Aktionen vor; die Runtime entscheidet
 über ihre Ausführung. Kein natives Tool-Calling, kein Cloud-Dienst, kein Agent-Framework.
 
 ```text
-Goal → Plan → LLM → JSON Parser → Gates → Tool → Observation → State
+Goal → Plan → LLM → Parser → Gates → Tool → Observation → State
                  ↑                                             │
                  └──────── kompakter neuer Kontext ─────────────┘
 ```
@@ -34,16 +34,20 @@ verlangen. Dateihashes binden diese Nachweise an den geprüften Code.
 
 Für Schreibschritte enthält der Plan nur den Pfad; das Modell erzeugt den Inhalt beim
 Ausführen des Schritts. Nach einem fehlgeschlagenen Tool-Aufruf sind standardmäßig
-höchstens zwei Reparaturpläne erlaubt. Die Parser erkennen striktes JSON, ein einzelnes
+höchstens 20 Reparaturpläne erlaubt. Die Parser erkennen striktes JSON, ein einzelnes
 JSON-Code-Fence und den beobachteten Fall eines als `plan` bezeichneten Tool-Aufrufs
 mit eindeutigem `tool`/`arguments`-Objekt. Alle Varianten durchlaufen dieselben Gates.
-Weitere Parser-Recovery, zusätzliche Backends und breite
-Benchmarks bleiben spätere Schritte. Ohne Tool-Policy bleiben Runs auf Lesen beschränkt.
+Im konfigurierbaren Dateimodus liefert das Modell vollständigen Python-Code in einem
+Code-Fence, ohne JSON-Escaping. Die Runtime bindet ihn an den bereits geplanten Pfad.
+Ohne Tool-Policy bleiben Runs auf Lesen beschränkt.
 
 Bei Parserfehlern erhält das Modell einen Korrekturhinweis mit JSON-Position bzw.
 Schemafeld; bei abgeschnittenen Antworten zusätzlich einen Hinweis auf das Output-Limit.
-Toolfehler gehen mit Ausgabe und Exit-Code in den nächsten Kontext ein. Ein neuer
-Reparaturplan kann daraufhin Änderungen und erneute Verifikation vorsehen.
+Toolfehler gehen mit Ausgabe und Exit-Code in den nächsten Kontext ein und bleiben
+über zwischenzeitliche Schreibschritte erhalten. Wahlweise erzeugt das Modell einen
+Reparaturplan oder die Runtime plant erneutes Schreiben und Prüfen deterministisch.
+Standardmäßig sind fünf Parser-Retries erlaubt; Datei-, Zeilen- und Funktionskorrekturen
+sowie der beste bisher getestete Quelltext sind als Reparaturvarianten konfigurierbar.
 
 Die Reparaturgrenze ist über `miniagent run --config config.toml 'Goal'` konfigurierbar:
 
@@ -60,8 +64,25 @@ max_parse_retries = 5
 Mit `max_replans = "unlimited"` entfällt ausschließlich die Reparaturplan-Grenze.
 Iterations-, Token-, Laufzeit-, Wiederholungs- und Fehlergrenzen gelten weiterhin.
 Parser-Retries sind separat von Reparaturplänen. Die Konfiguration wird im Run
-gespeichert und beim Resume übernommen; eine neue TOML-Datei ändert bestehende Runs
-nicht automatisch.
+gespeichert und beim Resume übernommen. Bestehende blockierte Runs lassen sich explizit
+mit `miniagent resume RUN_ID --config config.toml --retry-blocked` fortsetzen.
+Goal, verbrauchte Budgets und Nachweise bleiben erhalten; die Konfigurationsänderung
+wird protokolliert. Resume-Konfigurationen akzeptieren `[limits]`, `[runtime]` und `[model]`.
+
+Das Coding-Beispiel verwendet diese optionalen Runtime-Strategien:
+
+```toml
+[runtime]
+file_output_format = "fenced"
+planning_strategy = "files" # Plan aus erforderlichen Reads, erlaubten Dateien und Prüfungen
+execute_plan = true        # vollständig spezifizierte Tools brauchen keinen neuen LLM-Aufruf
+repair_strategy = "rewrite"
+repair_paths = ["app.py"]
+keep_best = true           # Reparaturkontext des besten Testversuchs
+```
+
+`keep_best` benötigt einen einzelnen erforderlichen Prüfbefehl mit dem strukturierten
+Report aus `miniagent.testing`. Der Zwischenstand ersetzt keine abschließende Verifikation.
 
 ## Installation und deterministischer Test
 
@@ -107,6 +128,29 @@ HF_HUB_DISABLE_XET=1 python examples/fibonacci_flask/demo.py \
 Das kleinere Coding-Modell dient einem schnelleren Praxistest. Phi-3.5 bleibt über
 `--model microsoft/Phi-3.5-mini-instruct` verfügbar. Weitere Details und die Grenzen
 des Tests stehen im [Coding-Beispiel](examples/fibonacci_flask/README.md).
+
+## Optionale DSPy-Promptoptimierung
+
+DSPy ist über **Modell-, Format- und Programmadapter sowie Optimierungsstrategien**
+angebunden. BootstrapFewShot und GEPA laufen lokal; weitere DSPy-Module und Optimierer
+können über dieselben Interfaces verwendet werden. Der Core benötigt DSPy nicht.
+
+```bash
+python -m pip install -e '.[local,dspy,examples]'
+python examples/dspy_optimize/demo.py --strategy bootstrap --output runs/optimized
+python examples/fibonacci_flask/demo.py \
+  --model Qwen/Qwen2.5-Coder-0.5B-Instruct --temperature 0.4 \
+  --prompt-artifact runs/optimized/prompt.json \
+  --limits-config examples/fibonacci_flask/long_run.toml
+```
+
+Die separate Optimierung erzeugt automatisch geprüfte Beispiele bzw. Instruktionen;
+die Runtime übernimmt das exportierte Datenartefakt und friert es für Resume ein.
+Python-Dateien brauchen weiterhin keinen JSON-Wrapper. Gates bleiben unverändert.
+Gemessen mit **0.5B**: BootstrapFewShot verbessert drei kleine Funktionstests von
+**2/3 auf 3/3**, GEPA bleibt bei **2/3**. Das vollständige Flask-Backend ist in den
+bisherigen Modellversuchen noch nicht erfolgreich. Details, Erweiterungspunkte und
+Grenzen stehen in [docs/dspy.md](docs/dspy.md).
 
 ## Schreib- und Ausführungsrechte
 
@@ -179,6 +223,8 @@ Projektion mit Checkliste, aktuellem Schritt, Nachweisen und Abschlusskriterien.
 nach jedem Übergang und beim Resume neu geschrieben; manuelle Plan-Änderungen sind
 noch nicht unterstützt. Abweichungen in `goal.md` führen zu einem Fehler. Für ein neues
 Goal einen neuen Run starten.
+Beim Replanning bleiben höchstens zwölf abgeschlossene Schritte im kompakten Plan;
+ältere Aktionen bleiben in den Logs, erforderliche Nachweise in den separaten State-Feldern.
 
 Atomare State-Updates und `fsync` schützen persistierte Übergänge. Eine Prozesssperre
 verhindert parallele Writer. Ein unterbrochener Read-Aufruf wird entweder aus seiner
@@ -200,7 +246,8 @@ Generierungsgrenze, kein harter Prozess-Timeout für Modellladen oder einen GPU-
 Dateizugriffe sind relativ zum Workspace, Traversal und aufgelöste Symlinks nach außen
 werden blockiert. Nur reguläre Dateien werden gelesen. Das ist keine OS-Sandbox gegen
 einen anderen Prozess, der gleichzeitig die Verzeichnisstruktur manipuliert.
-Outputs sind auf 8 KiB, Kontext-Observations auf vier Auszüge à 1200 Zeichen begrenzt.
+Outputs sind auf 8 KiB, Kontext-Observations auf vier Auszüge begrenzt:
+1200 Zeichen für erfolgreiche Ergebnisse und bis zu 3000 Zeichen Fehlerausgabe.
 Auszüge der ersten vier erforderlichen Eingabedateien bleiben zusätzlich im State,
 damit die Spezifikation nach mehreren Reparaturschritten noch im Kontext verfügbar ist.
 Im Kontext werden sie nicht doppelt eingebunden, solange die passende Lese-Observation
@@ -211,9 +258,8 @@ Zu lange Prompts werden ausdrücklich abgelehnt, statt Goal oder Regeln abzuschn
 `status` zeigt Iterationen, Token-/Tool-Nutzung, Fehlerzähler und Abschlussstatus.
 `parser_recoveries` zählt erfolgreiche Fallback-Parser. Vergleiche mit deaktivierten
 Komponenten können später über die explizite Composition ergänzt werden; die CLI
-bietet bewusst keinen Schalter zum Umgehen der Gates.
-Ein [DSPy-Experiment zur Promptoptimierung](docs/dspy.md) ist als möglicher nächster
-Vergleich beschrieben; DSPy ist noch nicht integriert.
+bietet bewusst keinen Schalter zum Umgehen der Gates. Planungs-, Reparatur- und
+Promptstrategien können für Vergleiche unabhängig gewählt werden.
 
 ## Codekarte
 

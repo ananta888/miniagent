@@ -6,12 +6,14 @@ from miniagent.gates.pipeline import (ArgumentGate, BudgetGate, CommandGate, Com
 from miniagent.loop import AgentLoop
 from miniagent.model.base import ModelBackend
 from miniagent.parsing.json_parser import ParserPipeline, StrictJSONParser
+from miniagent.parsing.action_parser import ActionParser
 from miniagent.parsing.fenced_json_parser import FencedJSONParser
 from miniagent.parsing.tool_recovery_parser import ToolRecoveryParser
 from miniagent.prompts.builder import PromptBuilder
+from miniagent.prompts.strategy import ArtifactPromptStrategy, PromptArtifact, PromptStrategy
 from miniagent.state.manager import StateManager
 from miniagent.state.models import AgentState, ModelConfig
-from miniagent.tools.base import ToolContext
+from miniagent.tools.base import ToolContext, workspace_path
 from miniagent.tools.list_files import ListFiles
 from miniagent.tools.read_file import ReadFile
 from miniagent.tools.registry import ToolRegistry
@@ -28,10 +30,12 @@ class Runtime:
     """Composition root: explicit components, no discovery or global registry."""
 
     def __init__(self, manager: StateManager, model: ModelBackend | None = None,
-                 backend_factory: Callable[[ModelConfig], ModelBackend] = local_backend):
+                 backend_factory: Callable[[ModelConfig], ModelBackend] = local_backend,
+                 prompt_strategy_factory: Callable[[ToolRegistry], PromptStrategy] | None = None):
         self.manager = manager
         self.model = model
         self.backend_factory = backend_factory
+        self.prompt_strategy_factory = prompt_strategy_factory
 
     def run(self) -> AgentState:
         with self.manager.lock():
@@ -54,6 +58,10 @@ class Runtime:
             executor = Executor(registry, context, execution_gates)
             # Backend construction is lazy: status and completed resume need no model.
             model = self.model or self.backend_factory(state.model_config_saved)
-            loop = AgentLoop(self.manager, model, ParserPipeline([StrictJSONParser(), FencedJSONParser(), ToolRecoveryParser()]),
-                             gates, executor, PromptBuilder(registry))
+            prompts = self.prompt_strategy_factory(registry) if self.prompt_strategy_factory else PromptBuilder(registry)
+            if state.options.prompt_artifact:
+                path = workspace_path(self.manager.run_dir, state.options.prompt_artifact)
+                prompts = ArtifactPromptStrategy(prompts, PromptArtifact.load(path))
+            loop = AgentLoop(self.manager, model, ActionParser(ParserPipeline([StrictJSONParser(), FencedJSONParser(), ToolRecoveryParser()])),
+                             gates, executor, prompts)
             return loop.run(state)

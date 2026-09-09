@@ -1,0 +1,10 @@
+[limits]
+max_replans = 40
+max_iterations = 250
+max_tool_calls = 200
+max_tokens = 2000000
+max_runtime_seconds = 1800.0
+max_consecutive_failures = 10
+max_parse_retries = 8
+max_blocked_actions = 8
+max_repeated_actions = 5

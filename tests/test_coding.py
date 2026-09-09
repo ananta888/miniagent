@@ -14,7 +14,9 @@ from pydantic import ValidationError
 from examples.fibonacci_flask.demo import HERE, ScriptedCodingBackend, create_run
 from miniagent.gates.pipeline import BudgetGate, CommandGate, CompletionGate, FailureGate, PathGate, StepGate
 from miniagent.runtime import Runtime
-from miniagent.state.models import AgentState, FinalAction, ModelConfig, PlanAction, PlanStep, RunLimits, StepState, ToolAction, ToolPolicy
+from miniagent.planning.planner import Planner
+from miniagent.state.models import AgentState, FinalAction, ModelConfig, PlanAction, PlanStep, RunLimits, RuntimeOptions, StepState, ToolAction, ToolPolicy
+from miniagent.model.base import ModelResponse
 from miniagent.state.observations import ObservationStore
 from miniagent.tools.base import ToolContext
 from miniagent.tools.shell import Shell, ShellArgs, run_command
@@ -174,6 +176,19 @@ class CodingToolTests(unittest.TestCase):
             with self.subTest(invalid=invalid), self.assertRaises(ValidationError):
                 RunLimits(max_replans=invalid)
 
+    def test_long_replanning_keeps_compact_state_and_explicit_evidence(self):
+        state = AgentState(run_id="test", goal="code", started_at=time.time(), verified_reads=["SPEC.md"])
+        state.verifications = {"verify": "source-digest"}
+        action = PlanAction(type="plan", steps=[PlanStep(description="Read", tool="read_file", arguments={"path": "SPEC.md"})])
+        planner = Planner()
+        for iteration in range(100):
+            planner.apply(action, state)
+            self.assertLessEqual(len(state.steps), 13)
+            state.current_step.observation_id = f"obs-{iteration}"
+        self.assertEqual(state.replans, 99)
+        self.assertEqual(state.verified_reads, ["SPEC.md"])
+        self.assertEqual(state.verifications, {"verify": "source-digest"})
+
 
 @unittest.skipUnless(importlib.util.find_spec("flask"), "Install .[examples] for Flask coding tests")
 class FibonacciWorkflowTests(unittest.TestCase):
@@ -215,10 +230,73 @@ class FibonacciWorkflowTests(unittest.TestCase):
         (context.workspace / "app.py").write_text("broken")
         self.assertFalse(CompletionGate(context).check(final, state).allowed)
 
+    def test_declared_modular_plan_uses_model_only_for_code_and_binds_all_files(self):
+        options = RuntimeOptions(file_output_format="fenced", planning_strategy="files", execute_plan=True)
+        manager = create_run(Path(self.temp.name) / "modular", ModelConfig(),
+                             RunLimits(max_tokens=4616), options, modular=True)
+        class Backend:
+            responses = iter(['```python\ndef fibonacci(n):\n    return n\n```',
+                              '```python\n' + (HERE / 'reference_app.py').read_text() + '\n```',
+                              '```text\nFlask>=3.1,<4\n```'])
+            prompts = []
+            def generate(self, prompt):
+                self.prompts.append(prompt)
+                return ModelResponse(text=next(self.responses), input_tokens=2, output_tokens=2)
+        backend = Backend()
+        state = Runtime(manager, backend).run()
+        self.assertEqual(state.status, "completed", state.feedback)
+        self.assertEqual(state.metrics.llm_calls, 3)
+        self.assertEqual(state.tool_calls, 5)
+        self.assertIn("Write the Python function fibonacci", backend.prompts[0])
+        self.assertIn("Import fibonacci from logic", backend.prompts[1])
+        # Even an unused allowed module is bound to the successful verification.
+        context = ToolContext(manager.run_dir / "workspace", policy=state.policy)
+        (context.workspace / "logic.py").write_text('changed = True\n')
+        self.assertFalse(CompletionGate(context).check(FinalAction(type="final", answer="done"), state).allowed)
+
+    def test_fenced_files_and_runtime_repair_preserve_error_and_source(self):
+        state = self.manager.load()
+        state.options = RuntimeOptions(file_output_format="fenced", repair_strategy="rewrite")
+        self.manager.save(state)
+        scripted = list(ScriptedCodingBackend().responses)
+        # The runtime supplies the repair plan, including both writable files.
+        scripted = scripted[:5] + [scripted[6], scripted[3], scripted[7], scripted[8]]
+        class Backend:
+            def __init__(self):
+                self.actions = iter(scripted)
+                self.prompts = []
+            def generate(self, prompt):
+                self.prompts.append(prompt)
+                action = next(self.actions)
+                if action.get("tool") == "write_file":
+                    text = "```\n" + action["arguments"]["content"] + "\n```"
+                else:
+                    text = json.dumps(action)
+                return ModelResponse(text=text, input_tokens=100, output_tokens=500)
+        model = Backend()
+        state = Runtime(self.manager, model).run()
+        self.assertEqual(state.status, "completed", state.feedback)
+        self.assertEqual(state.replans, 1)
+        self.assertEqual(state.iteration, state.metrics.llm_calls + 1)
+        self.assertIn("value=a + 1", model.prompts[5])
+        self.assertIn("AssertionError", model.prompts[5])
+        self.assertIn("AssertionError", model.prompts[6])  # retained across the successful write
+        self.assertIsNone(state.repair_feedback)
+
+    def test_runtime_repair_still_obeys_replan_gate(self):
+        state = self.manager.load()
+        state.options.repair_strategy = "rewrite"
+        state.limits.max_replans = 0
+        self.manager.save(state)
+        state = Runtime(self.manager, ScriptedCodingBackend()).run()
+        self.assertEqual(state.status, "blocked")
+        self.assertEqual(state.feedback, "Replan budget reached")
+        self.assertEqual(state.metrics.llm_calls, 5)
+
     def test_false_completion_after_failed_tests_is_blocked(self):
         model = ScriptedCodingBackend()
         actions = list(model.responses)[:5]
-        actions += [{"type": "final", "answer": "All tests pass"}] * 3
+        actions += [{"type": "final", "answer": "All tests pass"}] * self.manager.load().limits.max_blocked_actions
         model.responses = iter(actions)
         state = Runtime(self.manager, model).run()
         self.assertEqual(state.status, "blocked")

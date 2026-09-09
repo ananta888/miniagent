@@ -1,3 +1,5 @@
+import hashlib
+
 from miniagent.model.base import ModelResponse
 from miniagent.state.models import ModelConfig
 
@@ -53,7 +55,11 @@ class TransformersBackend:
             raise ValueError("Prompt and output allowance exceed the model context window")
         sampling = self.config.temperature > 0
         kwargs = {"temperature": self.config.temperature} if sampling else {"temperature": 1.0, "top_p": 1.0, "top_k": 50}
-        with self.torch.inference_mode():
+        devices = [self.model.device.index] if self.model.device.type == "cuda" else []
+        # Prompt-derived seeds survive resume without hidden RNG state.
+        seed = (self.config.seed + int.from_bytes(hashlib.sha256(prompt.encode()).digest()[:4], "big")) % 2147483648
+        with self.torch.random.fork_rng(devices=devices), self.torch.inference_mode():
+            self.torch.manual_seed(seed)
             output = self.model.generate(
                 **inputs,
                 max_new_tokens=self.config.max_new_tokens,
