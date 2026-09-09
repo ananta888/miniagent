@@ -1,6 +1,4 @@
-import re
-
-from miniagent.parsing.file_parser import parse_file_content
+from miniagent.parsing.file_parser import file_blocks, parse_file_content
 from miniagent.parsing.function_edit_parser import function_target, parse_function_edit
 from miniagent.parsing.json_parser import ParseError, ParserPipeline
 from miniagent.parsing.line_edit_parser import parse_line_edit
@@ -47,5 +45,5 @@ class ActionParser:
                     raise edit_error
         self.method = "file"
         action = parse_file_content(text, path)
-        self.recovered = len(re.findall(r"^```[^\n]*$", text, re.MULTILINE)) > 2
+        self.recovered = len(file_blocks(text)) > 1
         return action

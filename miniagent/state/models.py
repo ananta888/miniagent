@@ -32,7 +32,7 @@ class RunLimits(StrictModel):
 
 
 class RuntimeOptions(StrictModel):
-    file_output_format: Literal["json", "fenced"] = "json"
+    file_output_format: Literal["json", "fenced"] = "fenced"
     repair_strategy: Literal["model", "rewrite"] = "model"
     execute_plan: bool = False
     planning_strategy: Literal["model", "files"] = "model"

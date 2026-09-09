@@ -1,5 +1,6 @@
 import fcntl
 import hashlib
+import json
 import shutil
 import time
 import uuid
@@ -68,7 +69,11 @@ class StateManager:
                 fcntl.flock(stream, fcntl.LOCK_UN)
 
     def load(self) -> AgentState:
-        state = AgentState.model_validate_json((self.run_dir / "state.json").read_text())
+        saved = json.loads((self.run_dir / "state.json").read_text())
+        # Runs predating RuntimeOptions used JSON. Resume must not change their protocol.
+        if "options" not in saved:
+            saved["options"] = {"file_output_format": "json"}
+        state = AgentState.model_validate(saved)
         if (self.run_dir / "goal.md").read_text() != f"# Goal\n\n{state.goal}\n":
             raise ValueError("goal.md differs from state.json; implicit goal changes are forbidden")
         return state

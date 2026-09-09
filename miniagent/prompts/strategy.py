@@ -17,7 +17,7 @@ class PromptArtifact(StrictModel):
     input_fields: list[str] = Field(min_length=1, max_length=12)
     output_field: str
     demos: list[dict[str, str]] = Field(default_factory=list, max_length=16)
-    file_suffixes: list[str] = Field(default_factory=lambda: [".py"], max_length=8)
+    file_suffixes: list[str] | None = Field(default_factory=lambda: [".py"], max_length=8)
 
     @model_validator(mode="after")
     def check_fields(self):
@@ -28,7 +28,7 @@ class PromptArtifact(StrictModel):
             raise ValueError("Each demonstration must contain exactly the declared input and output fields")
         if sum(len(value) for demo in self.demos for value in demo.values()) > 64000:
             raise ValueError("Demonstrations exceed the 64000-character allowance")
-        if any(not suffix.startswith(".") or "/" in suffix or "\\" in suffix for suffix in self.file_suffixes):
+        if any(not suffix.startswith(".") or "/" in suffix or "\\" in suffix for suffix in self.file_suffixes or []):
             raise ValueError("File suffixes must be extensions such as .py")
         return self
 
@@ -58,6 +58,7 @@ class ArtifactPromptStrategy:
     def build(self, state: AgentState, context: dict) -> str:
         task = self.baseline.build(state, context)
         if (state.current_step and state.current_step.proposal.tool == "write_file" and not state.needs_replan
-                and Path(state.current_step.proposal.arguments["path"]).suffix in self.artifact.file_suffixes):
+                and (self.artifact.file_suffixes is None
+                     or Path(state.current_step.proposal.arguments["path"]).suffix in self.artifact.file_suffixes)):
             return self.artifact.render({"task": task})
         return task

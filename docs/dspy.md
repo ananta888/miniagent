@@ -103,9 +103,13 @@ nicht in einen einzelnen Prompt übersetzt. Es bleibt über `ProgramAdapter` nut
 
 Die Runtime verwendet `ArtifactPromptStrategy`, eine Implementierung des kleinen
 `PromptStrategy`-Protocols. Der exportierte Runtime-Prompt erwartet ein Eingabefeld
-`task` und eine Textausgabe. Standardmäßig gilt er nur für `.py`-Schreibschritte;
-Planung und `requirements.txt` behalten ihre eigenen Prompts. `file_suffixes` kann
-im Artefakt explizit geändert werden. Neue Runs kopieren das Artefakt unter einem
+`task` und eine Textausgabe. Die Python-Beispiele beschränken ihn standardmäßig auf
+`.py`-Schreibschritte; Planung und `requirements.txt` behalten ihre eigenen Prompts.
+Dies ist die Auswahl eines passenden optimierten Prompts, keine Einschränkung der
+Dateiausgabe: Alle Textdateien werden standardmäßig ohne JSON-Aktionswrapper geschrieben.
+`file_suffixes` kann im Artefakt auf andere Endungen gesetzt werden, etwa `[".md", ".java"]`.
+Mit `"file_suffixes": null` gilt ein allgemeiner Textprompt für sämtliche Schreibziele,
+einschließlich Dateien ohne Endung. Neue Runs kopieren das Artefakt unter einem
 Inhaltshash nach `artifacts/`. Änderungen an der Ursprungsdatei verändern einen
 bestehenden Run nicht. Exportierte Prompts benötigen bei der Ausführung kein DSPy.
 

@@ -35,6 +35,11 @@ class ArtifactTests(unittest.TestCase):
         state.current_step.proposal.arguments["path"] = "app.py"
         state.needs_replan = True
         self.assertEqual(strategy.build(state, {}), "baseline")
+        state.needs_replan = False
+        artifact.file_suffixes = None  # General text prompt, including files without an extension.
+        for path in ["README.md", "Main.java", "LICENSE", "unknown.custom"]:
+            state.current_step.proposal.arguments["path"] = path
+            self.assertIn("optimized", strategy.build(state, {}))
 
     def test_prompt_is_frozen_in_run_and_survives_source_changes(self):
         with tempfile.TemporaryDirectory() as directory:

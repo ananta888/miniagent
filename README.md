@@ -37,8 +37,14 @@ Ausführen des Schritts. Nach einem fehlgeschlagenen Tool-Aufruf sind standardm�
 höchstens 20 Reparaturpläne erlaubt. Die Parser erkennen striktes JSON, ein einzelnes
 JSON-Code-Fence und den beobachteten Fall eines als `plan` bezeichneten Tool-Aufrufs
 mit eindeutigem `tool`/`arguments`-Objekt. Alle Varianten durchlaufen dieselben Gates.
-Im konfigurierbaren Dateimodus liefert das Modell vollständigen Python-Code in einem
-Code-Fence, ohne JSON-Escaping. Die Runtime bindet ihn an den bereits geplanten Pfad.
+Neue Runs verwenden standardmäßig den Dateimodus: Das Modell liefert den vollständigen
+Text in einem Code-Fence, ohne JSON-Escaping. Das gilt für Python, Markdown, Java,
+JavaScript, Konfigurationen und beliebige andere UTF-8-Textdateien, auch ohne Endung.
+Die Runtime bindet den Inhalt an den bereits geplanten Pfad. Enthält eine Markdown-Datei
+selbst Code-Fences, wird eine längere äußere Begrenzung verwendet, etwa vier Backticks
+um einen Inhalt mit drei Backticks. Tilden-Fences werden ebenfalls unterstützt.
+`file_output_format = "json"` bleibt als expliziter Vergleichsmodus verfügbar;
+bestehende Runs behalten beim Resume ihr gespeichertes Ausgabeformat.
 Ohne Tool-Policy bleiben Runs auf Lesen beschränkt.
 
 Bei Parserfehlern erhält das Modell einen Korrekturhinweis mit JSON-Position bzw.
@@ -146,7 +152,8 @@ python examples/fibonacci_flask/demo.py \
 
 Die separate Optimierung erzeugt automatisch geprüfte Beispiele bzw. Instruktionen;
 die Runtime übernimmt das exportierte Datenartefakt und friert es für Resume ein.
-Python-Dateien brauchen weiterhin keinen JSON-Wrapper. Gates bleiben unverändert.
+Textdateien brauchen keinen JSON-Wrapper. Gates bleiben unverändert. Die mitgelieferten
+Python-Demos optimieren nur `.py`-Prompts; diese Auswahl beschränkt nicht den Dateimodus.
 Gemessen mit **0.5B**: BootstrapFewShot verbessert drei kleine Funktionstests von
 **2/3 auf 3/3**, GEPA bleibt bei **2/3**. Das vollständige Flask-Backend ist in den
 bisherigen Modellversuchen noch nicht erfolgreich. Details, Erweiterungspunkte und

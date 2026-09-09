@@ -12,6 +12,18 @@ from miniagent.state.models import ModelConfig, RunLimits
 
 
 class CLITests(unittest.TestCase):
+    def test_legacy_run_keeps_json_protocol_on_resume(self):
+        with tempfile.TemporaryDirectory() as directory:
+            manager = StateManager.create(Path(directory), "Inspect", ModelConfig(), RunLimits())
+            path = manager.run_dir / "state.json"
+            saved = json.loads(path.read_text())
+            del saved["options"]
+            path.write_text(json.dumps(saved))
+            state = manager.load()
+            self.assertEqual(state.options.file_output_format, "json")
+            manager.save(state)
+            self.assertEqual(manager.load().options.file_output_format, "json")
+
     def test_explicit_resume_config_preserves_goal_evidence_and_usage(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)

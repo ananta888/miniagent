@@ -88,7 +88,8 @@ class PromptBuilder:
             kind = "This is a pip dependency manifest: package requirements only, one per line. No Python code. "
         elif Path(path).suffix == ".py":
             kind = "This file must contain executable Python source. "
-        sections.append(f"OUTPUT ONLY {path}\n{kind}One code fence containing only this file. Do not output any other file.")
+        sections.append(f"OUTPUT ONLY {path}\n{kind}One code fence containing only this file. Do not output any other file. "
+                        "If the file contains code fences, use an outer fence longer than every fence inside the file.")
         if target:
             sections[0] = f"Correct the Python function {target.name} in {path}. The runtime preserves the rest of the file."
             sections[-1] = (f"Return only the complete corrected definition of {target.name} in one Python code fence. "

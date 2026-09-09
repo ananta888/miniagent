@@ -195,7 +195,8 @@ class FibonacciWorkflowTests(unittest.TestCase):
     def setUp(self):
         self.temp = tempfile.TemporaryDirectory()
         self.addCleanup(self.temp.cleanup)
-        self.manager = create_run(Path(self.temp.name) / "runs", ModelConfig(max_new_tokens=1536))
+        self.manager = create_run(Path(self.temp.name) / "runs", ModelConfig(max_new_tokens=1536),
+                                  options=RuntimeOptions(file_output_format="json"))
 
     def test_generate_fail_replan_fix_verify_complete(self):
         self.assertFalse((self.manager.run_dir / "workspace/app.py").exists())
