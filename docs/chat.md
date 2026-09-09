@@ -42,6 +42,11 @@ Loopback. Mit `--port 7682` lässt sich der Browser-Port ändern. Ohne `--web` h
 der Launcher das aktuelle Terminal an Herdr an. `--name` wählt eine andere
 Herdr-Sitzung; eine Chat-Sitzung sollte genau einer Herdr-Sitzung zugeordnet bleiben.
 
+Für den eingerichteten HTTPS-Zugang unter **https://miniagent.minipc.ananta.de**
+siehe [Deployment](deployment.md). `--bind` erlaubt eine explizite private
+Listener-IP hinter einem authentifizierten Reverse Proxy; der Standard bleibt
+`127.0.0.1`. Wildcard- und öffentliche Listener-Adressen werden abgewiesen.
+
 Der Launcher verwendet `.cache/herdr-chat.toml` und ändert nicht die persönliche
 Herdr-Konfiguration. Beim erneuten Aufruf bleibt eine laufende Chat-Sitzung bestehen.
 Neue Sitzungen verwenden standardmäßig das

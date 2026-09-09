@@ -1,6 +1,7 @@
-"""Attach the miniagent chat to Herdr, optionally through a localhost web terminal."""
+"""Attach the miniagent chat to Herdr, optionally through a private web terminal."""
 import argparse
 import fcntl
+import ipaddress
 import json
 import os
 import shlex
@@ -24,7 +25,8 @@ def binary(name: str) -> str:
 def main() -> int:
     cli = argparse.ArgumentParser(description=__doc__)
     cli.add_argument('--web', action='store_true')
-    cli.add_argument('--port', type=int, default=7681, help='Browser port on 127.0.0.1')
+    cli.add_argument('--port', type=int, default=7681, help='Browser port')
+    cli.add_argument('--bind', default='127.0.0.1', help='Listener IP; use non-loopback only behind an authenticated proxy')
     cli.add_argument('--name', default='miniagent', help='Named Herdr session')
     cli.add_argument('--session', type=Path, default=ROOT / 'runs/chat/tetris')
     cli.add_argument('--config', type=Path, default=ROOT / 'examples/tetris_html/chat.toml')
@@ -32,6 +34,9 @@ def main() -> int:
     try:
         if not 1 <= args.port <= 65535:
             raise ValueError('Invalid browser port')
+        address = ipaddress.ip_address(args.bind)
+        if address.is_unspecified or address.is_multicast or not address.is_private:
+            raise ValueError('Browser listener requires a loopback or private IP')
         herdr = binary('herdr')
         ttyd = binary('ttyd') if args.web else None
         os.chdir(ROOT)
@@ -82,9 +87,10 @@ def main() -> int:
             # pane run submits to the shell. Quote argv as shell code, never JSON.
             subprocess.run([*prefix, 'pane', 'run', pane, shlex.join(command)], check=True, timeout=10)
         if args.web:
-            print(f'Chat im Browser: http://127.0.0.1:{args.port}', flush=True)
+            host = f'[{address}]' if address.version == 6 else str(address)
+            print(f'Browser-Brücke: http://{host}:{args.port}', flush=True)
             print('Strg+C beendet die Browser-Brücke; Herdr und der Chat bleiben bestehen.', flush=True)
-            os.execv(ttyd, [ttyd, '-i', '127.0.0.1', '-p', str(args.port), '-W', '-O', '-m', '1', *prefix])
+            os.execv(ttyd, [ttyd, '-i', str(address), '-p', str(args.port), '-W', '-O', '-m', '1', *prefix])
         os.execv(herdr, prefix)
     except (OSError, ValueError, RuntimeError, subprocess.SubprocessError) as error:
         print(f'chat: {error}', file=sys.stderr)

@@ -32,6 +32,10 @@ Danach **http://127.0.0.1:7681** öffnen. Normale Nachrichten sind Chat;
 [Vollständige Anleitung und Grenzen](docs/chat.md).
 Herdr hat keine dokumentierte eingebaute Weboberfläche; dafür dient ttyd.
 
+Auf dem Mini-PC läuft der passwortgeschützte Zugang unter
+**https://miniagent.minipc.ananta.de**.
+[Deployment, lokale Zugangsdaten und Dienstverwaltung](docs/deployment.md).
+
 [Die spielbare Tetris-Referenz](examples/tetris_html/reference/) besteht 14 Vertragsprüfungen
 und einen echten Browser-Test. Sie wurde manuell erstellt und ist ausdrücklich kein
 Erfolg des autonomen Modelllaufs. Das ursprüngliche Modellergebnis bleibt als
