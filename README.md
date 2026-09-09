@@ -129,9 +129,11 @@ ergänzen (40 Reparaturpläne und weitere erhöhte Limits). Der Server bleibt f�
 Aufgaben geladen, bis er im ersten Terminal mit Strg+C beendet wird. Die Pfade oben
 sind das vorhandene lokale Setup; auf anderen Rechnern passende Modell-/Buildpfade verwenden.
 
-Lokal geprüft: Der obige Tetris-Aufruf erzeugte mit K2 Horizon eine HTML-Datei in drei
+Das [veröffentlichte Tetris-Ergebnis mit exakten Parametern und Aufrufen](examples/tetris_html/README.md)
+enthält die unveränderte HTML-Datei und Run-Nachweise. Der Aufruf erzeugte sie in drei
 LLM-Aufrufen, einschließlich zweier Parserkorrekturen. `node --check` akzeptierte das
-eingebettete JavaScript. Die Spielmechanik wurde dabei nicht im Browser getestet.
+JavaScript; eine nachträgliche Zellprüfung zeigte jedoch fehlerhafte Tetromino-Daten.
+Das Ergebnis ist kein nachgewiesen spielbares Tetris; ein Browser-Spieltest fehlt.
 
 ## Installation und deterministischer Test
 

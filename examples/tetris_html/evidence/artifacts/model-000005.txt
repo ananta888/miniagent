@@ -1,0 +1,112 @@
+```html
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<title>Tetris</title>
+<style>
+  body { font-family: Arial, sans-serif; background: #111; color: #eee; text-align: center; }
+  canvas { background: #000; display: block; margin: 0 auto; border: 2px solid #555; }
+  #info { font-size: 12px; margin-top: 8px; }
+  #score { font-weight: bold; font-size: 14px; }
+  button { font-size: 12px; padding: 4px 10px; }
+</style>
+</head>
+<body>
+<canvas id="board" width="240" height="480"></canvas>
+<div id="info">
+  <div id="score">Punkte: 0</div>
+  <div id="level">Ebene: 1</div>
+  <div id="status">Spiel läuft</div>
+  <div id="instructions">Steuerung: ←↑→↓ Hard Drop (Leer) &nbsp;|&nbsp; <button id="restart">Neustart</button></div>
+</div>
+<script>
+const TETROMINOES = {
+  I: [[[[0,0],[0,1],[0,2],[0,3]],[[0,0],[1,0],[2,0],[3,0]]]],
+  O: [[[[0,0],[0,1],[1,0],[1,1]]]],
+  T: [[[[0,0],[1,0],[2,0],[1,1]],[[0,0],[0,1],[1,0],[1,1]]]],
+  S: [[[[0,1],[1,0],[1,1],[2,0]],[[0,0],[1,0],[1,1],[2,1]]]],
+  Z: [[[[0,0],[1,0],[1,1],[2,1]],[[0,1],[1,0],[2,0],[2,1]]]],
+  J: [[[[0,0],[0,1],[1,0],[2,0]],[[0,0],[0,1],[1,0],[2,0]]]],
+  L: [[[[0,1],[1,0],[2,0],[2,1]],[[0,0],[1,0],[1,1],[2,0]]]]
+};
+const COLOURS = { I:'#00f0f0', O:'#fff', T:'#f0f', S:'#f0f0', Z:'#f0f0', J:'#f0f0', L:'#f0f0' };
+let board = [], piece = null, pieceX = 0, pieceY = 0, pieceType = null, pieceRot = 0, score = 0, level = 1, status = 'laufen', lastTime = 0, dt = 0, dropTimer = 0, locked = false;
+const canvas = document.getElementById('board');
+const ctx = canvas.getContext('2d');
+const scoreEl = document.getElementById('score');
+const levelEl = document.getElementById('level');
+const statusEl = document.getElementById('status');
+const restartBtn = document.getElementById('restart');
+
+function createBoard() { board = Array.from({length: 20}, () => Array(10).fill(0)); }
+function createPiece() {
+  const types = Object.keys(TETROMINOES);
+  pieceType = types[Math.floor(Math.random() * types.length)];
+  pieceRot = 0;
+  piece = TETROMINOES[pieceType][0];
+  pieceX = 5; pieceY = 0;
+}
+function cells() { return piece.map(c => [pieceX + c[0], pieceY + c[1]]); }
+function rotate() {
+  piece = TETROMINOES[pieceType][(pieceRot + 1) % TETROMINOES[pieceType].length];
+  pieceRot = (pieceRot + 1) % TETROMINOES[pieceType].length;
+}
+function collide() { return cells().some(c => c[1] < 0 || c[1] >= 20 || c[0] < 0 || c[0] >= 10 || (board[c[1]] && board[c[1]][c[0]] !== 0)); }
+function move(dx, dy) { pieceX += dx; pieceY += dy; if (collide()) { pieceX -= dx; pieceY -= dy; return false; } return true; }
+function hardDrop() { while (move(0, 1)) { } pieceY += 1; if (!collide()) { pieceY -= 1; } lockPiece(); }
+function lockPiece() {
+  cells().forEach(c => { if (c[1] >= 0 && c[1] < 20) board[c[1]][c[0]] = pieceType; });
+  const lines = [];
+  for (let y = 0; y < 20; y++) { const row = board[y].filter(v => v !== 0); if (row.length === 10) { lines.push(y); for (let x = 0; x < 10; x++) board[y][x] = 0; } }
+  lines.forEach(y => { const above = y === 0 ? 0 : board[y - 1].filter(v => v !== 0).length; score += 100 * above + 300; level = Math.min(20, level + 1); });
+  scoreEl.textContent = 'Punkte: ' + score;
+  levelEl.textContent = 'Ebene: ' + level;
+  statusEl.textContent = 'Spiel läuft';
+  if (lines.length) { setTimeout(spawn, 800); return; }
+  createPiece();
+}
+function spawn() {
+  if (pieceY === 0 && collide()) { statusEl.textContent = 'Spiel vorbei'; status = 'over'; return; }
+  createPiece();
+}
+function draw() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  for (let y = 0; y < 20; y++) {
+    for (let x = 0; x < 10; x++) {
+      if (board[y][x]) ctx.fillStyle = COLOURS[board[y][x]];
+      else ctx.fillStyle = '#000';
+      ctx.fillRect(x * 24, y * 24, 24, 24);
+    }
+  }
+  if (piece) {
+    ctx.fillStyle = '#fff';
+    cells().forEach(c => ctx.fillRect((pieceX + c[0]) * 24, (pieceY + c[1]) * 24, 24, 24));
+    ctx.fillStyle = '#0f0';
+    ctx.fillRect(0, 0, 240, 24);
+  }
+}
+function step(timestamp) {
+  const now = timestamp || performance.now();
+  dt = now - lastTime;
+  lastTime = now;
+  if (dt > 1000) { dropTimer = 0; }
+  if (dt > 1000 / (level * 0.9)) { pieceY += 1; if (collide()) { pieceY -= 1; lockPiece(); } }
+  draw();
+  if (status === 'laufen') requestAnimationFrame(step);
+}
+function onKey(e) {
+  if (status !== 'laufen') return;
+  if (e.key === 'ArrowLeft') move(-1, 0);
+  else if (e.key === 'ArrowRight') move(1, 0);
+  else if (e.key === 'ArrowDown') move(0, 1);
+  else if (e.key === 'ArrowUp') { rotate(); if (collide()) { rotate(); } else if (!move(0, 0)) { pieceX += 1; move(0, 0); } }
+  else if (e.key === ' ') { hardDrop(); }
+}
+restartBtn.addEventListener('click', () => { createBoard(); createPiece(); score = 0; level = 1; status = 'laufen'; scoreEl.textContent = 'Punkte: 0'; levelEl.textContent = 'Ebene: 1'; statusEl.textContent = 'Spiel läuft'; draw(); });
+document.addEventListener('keydown', onKey);
+createBoard(); createPiece(); draw(); requestAnimationFrame(step);
+</script>
+</body>
+</html>
+```

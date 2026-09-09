@@ -1,0 +1,98 @@
+{
+  "run_id": "9d4ac7babede",
+  "started_at_utc": "2026-09-09T11:54:31.068946+00:00",
+  "runtime_status": "completed",
+  "functional_status": "failed_cell_coordinate_check",
+  "seconds": 110.43937873840332,
+  "iterations": 6,
+  "tool_calls": 2,
+  "replans": 0,
+  "tokens": 11667,
+  "metrics": {
+    "llm_calls": 3,
+    "parser_recoveries": 0,
+    "invalid_actions": 2,
+    "blocked_actions": 0,
+    "loop_detections": 0,
+    "failed_tools": 0,
+    "successful_tools": 2
+  },
+  "model": {
+    "model": "/home/krusty/joschka-lokal-hermes-test/models/K2-Horizon-7B-Q4_K_M.gguf",
+    "revision": "local-file",
+    "max_new_tokens": 4096,
+    "max_context_tokens": 4096,
+    "temperature": 0.4,
+    "seed": 0,
+    "device": "auto",
+    "local_files_only": true,
+    "max_generation_seconds": 180.0
+  },
+  "limits": {
+    "max_iterations": 100,
+    "max_tool_calls": 80,
+    "max_tokens": 100000,
+    "max_runtime_seconds": 3600.0,
+    "max_consecutive_failures": 3,
+    "max_parse_retries": 5,
+    "max_blocked_actions": 3,
+    "max_repeated_actions": 3,
+    "max_replans": 20
+  },
+  "runtime": {
+    "file_output_format": "fenced",
+    "repair_strategy": "rewrite",
+    "execute_plan": true,
+    "planning_strategy": "files",
+    "fresh_after": 3,
+    "keep_best": false,
+    "repair_edit": "file",
+    "repair_paths": [
+      "tetris.html"
+    ],
+    "repair_functions": {},
+    "prompt_artifact": null,
+    "file_tasks": {}
+  },
+  "tools": {
+    "write_paths": [
+      "tetris.html"
+    ],
+    "commands": {},
+    "required_verifications": [],
+    "command_timeout_seconds": 20.0
+  },
+  "provenance": {
+    "miniagent_code_commit": "18996ab",
+    "model_repository": "abenzerps/K2-Horizon-7B-GGUF",
+    "model_revision": "a5094087a5a55c2de80264c11504d8ca95a022ff",
+    "model_sha256": "eb89c15a0ae9712be2ee462bf43802de14200f20f93b73da6eb68c2ebdd28e4e",
+    "llama_cpp_commit": "35999d101cf2233fc54f09c3c8d599da7303ce02",
+    "gpu": "NVIDIA GeForce RTX 3080, 10240 MiB",
+    "python": "3.12.14",
+    "pydantic": "2.13.5",
+    "node_for_post_run_check": "v22.22.1"
+  },
+  "http_generation": {
+    "temperature": 0.4,
+    "top_p": 0.95,
+    "max_tokens": 4096,
+    "stream": false,
+    "chat_template_kwargs": {
+      "reasoning_effort": "high"
+    },
+    "seed_formula": "(0 + int.from_bytes(sha256(prompt.encode()).digest()[:4], 'big')) % 2147483648"
+  },
+  "artifact": {
+    "path": "tetris.html",
+    "bytes": 5010,
+    "sha256": "0c188ceb7e0e2825f1fb7f40ec7bff1288fb213a1415431808041fc940eef954",
+    "manually_modified": false
+  },
+  "post_run_checks": {
+    "javascript_syntax_exit_code": 0,
+    "cell_coordinates_valid": false,
+    "browser_gameplay_tested": false,
+    "fed_back_to_original_run": false
+  }
+}
