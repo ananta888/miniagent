@@ -1,0 +1,57 @@
+0.00.663.479 I print_info: model params          = 9.00 B
+0.17.020.087 I load_tensors: offloaded 37/37 layers to GPU
+0.17.020.096 I load_tensors:        CUDA0 model buffer size =  5322.23 MiB
+0.19.635.597 I llama_context: n_ctx                 = 8192
+0.19.647.783 I llama_kv_cache:      CUDA0 KV buffer size =  1152.00 MiB
+0.19.664.452 I sched_reserve:      CUDA0 compute buffer size =    26.00 MiB
+0.19.664.457 I sched_reserve:  CUDA_Host compute buffer size =     4.00 MiB
+0.19.815.800 I slot   load_model: id  0 | task -1 | new slot, n_ctx = 8192
+1.19.509.217 I slot print_timing: id  0 | task 0 | n_gen =    317, tg = 105.32 t/s, tg_3s = 105.65 t/s
+1.22.521.574 I slot print_timing: id  0 | task 0 | n_gen =    611, tg = 101.45 t/s, tg_3s =  97.60 t/s
+1.25.526.156 I slot print_timing: id  0 | task 0 | n_gen =    910, tg = 100.81 t/s, tg_3s =  99.51 t/s
+1.26.633.828 I cmn  common_reaso: budget exhausted, forcing end sequence
+1.28.530.573 I slot print_timing: id  0 | task 0 | n_gen =   1217, tg = 101.15 t/s, tg_3s = 102.18 t/s
+1.29.777.702 I slot print_timing: id  0 | task 0 | prompt eval time =     218.18 ms /   321 tokens (    0.68 ms per token,  1471.24 tokens per second)
+1.29.777.705 I slot print_timing: id  0 | task 0 |        eval time =   13268.94 ms /  1344 tokens (    9.88 ms per token,   101.21 tokens per second)
+1.29.777.706 I slot print_timing: id  0 | task 0 |       total time =   13487.12 ms /  1665 tokens
+1.29.777.710 I slot print_timing: id  0 | task 0 |    graphs reused =       1339
+1.30.994.939 I slot print_timing: id  0 | task 1345 | prompt eval time =      94.31 ms /   319 tokens (    0.30 ms per token,  3382.32 tokens per second)
+1.30.994.943 I slot print_timing: id  0 | task 1345 |        eval time =     555.23 ms /    59 tokens (    9.57 ms per token,   104.46 tokens per second)
+1.30.994.943 I slot print_timing: id  0 | task 1345 |       total time =     649.54 ms /   378 tokens
+1.30.994.944 I slot print_timing: id  0 | task 1345 |    graphs reused =       1396
+1.35.206.064 I slot print_timing: id  0 | task 1405 | n_gen =    311, tg = 103.21 t/s, tg_3s = 103.55 t/s
+1.38.215.385 I slot print_timing: id  0 | task 1405 | n_gen =    619, tg = 102.78 t/s, tg_3s = 102.35 t/s
+1.41.224.333 I slot print_timing: id  0 | task 1405 | n_gen =    926, tg = 102.53 t/s, tg_3s = 102.03 t/s
+1.42.180.065 I cmn  common_reaso: budget exhausted, forcing end sequence
+1.44.229.403 I slot print_timing: id  0 | task 1405 | n_gen =   1230, tg = 102.19 t/s, tg_3s = 101.16 t/s
+1.47.237.950 I slot print_timing: id  0 | task 1405 | n_gen =   1531, tg = 101.76 t/s, tg_3s = 100.05 t/s
+1.50.239.661 I slot print_timing: id  0 | task 1405 | n_gen =   1831, tg = 101.46 t/s, tg_3s =  99.94 t/s
+1.53.247.967 I slot print_timing: id  0 | task 1405 | n_gen =   2129, tg = 101.11 t/s, tg_3s =  99.06 t/s
+1.56.251.874 I slot print_timing: id  0 | task 1405 | n_gen =   2425, tg = 100.79 t/s, tg_3s =  98.54 t/s
+1.59.255.627 I slot print_timing: id  0 | task 1405 | n_gen =   2719, tg = 100.47 t/s, tg_3s =  97.88 t/s
+2.02.265.643 I slot print_timing: id  0 | task 1405 | n_gen =   3012, tg = 100.16 t/s, tg_3s =  97.34 t/s
+2.05.267.510 I slot print_timing: id  0 | task 1405 | n_gen =   3303, tg =  99.86 t/s, tg_3s =  96.94 t/s
+2.08.274.811 I slot print_timing: id  0 | task 1405 | n_gen =   3591, tg =  99.52 t/s, tg_3s =  95.77 t/s
+2.11.279.039 I slot print_timing: id  0 | task 1405 | n_gen =   3879, tg =  99.24 t/s, tg_3s =  95.86 t/s
+2.13.554.613 I slot print_timing: id  0 | task 1405 | prompt eval time =     231.68 ms /   790 tokens (    0.29 ms per token,  3409.89 tokens per second)
+2.13.554.616 I slot print_timing: id  0 | task 1405 |        eval time =   41352.02 ms /  4096 tokens (   10.10 ms per token,    99.03 tokens per second)
+2.13.554.617 I slot print_timing: id  0 | task 1405 |       total time =   41583.69 ms /  4886 tokens
+2.13.554.618 I slot print_timing: id  0 | task 1405 |    graphs reused =       5476
+2.17.458.381 I slot print_timing: id  0 | task 5503 | n_gen =    311, tg = 103.12 t/s, tg_3s = 103.45 t/s
+2.20.459.502 I slot print_timing: id  0 | task 5503 | n_gen =    590, tg =  98.05 t/s, tg_3s =  92.97 t/s
+2.23.460.298 I slot print_timing: id  0 | task 5503 | n_gen =    895, tg =  99.24 t/s, tg_3s = 101.64 t/s
+2.24.732.011 I cmn  common_reaso: budget exhausted, forcing end sequence
+2.26.463.090 I slot print_timing: id  0 | task 5503 | n_gen =   1198, tg =  99.66 t/s, tg_3s = 100.91 t/s
+2.28.022.960 I slot print_timing: id  0 | task 5503 | prompt eval time =      34.22 ms /   102 tokens (    0.34 ms per token,  2980.36 tokens per second)
+2.28.022.965 I slot print_timing: id  0 | task 5503 |        eval time =   13570.75 ms /  1354 tokens (   10.03 ms per token,    99.70 tokens per second)
+2.28.022.965 I slot print_timing: id  0 | task 5503 |       total time =   13604.97 ms /  1456 tokens
+2.28.022.966 I slot print_timing: id  0 | task 5503 |    graphs reused =       6823
+2.32.203.281 I slot print_timing: id  0 | task 6858 | n_gen =    310, tg = 102.92 t/s, tg_3s = 103.26 t/s
+2.35.205.623 I slot print_timing: id  0 | task 6858 | n_gen =    618, tg = 102.76 t/s, tg_3s = 102.59 t/s
+2.38.215.419 I slot print_timing: id  0 | task 6858 | n_gen =    927, tg = 102.73 t/s, tg_3s = 102.66 t/s
+2.39.154.773 I cmn  common_reaso: budget exhausted, forcing end sequence
+2.41.220.141 I slot print_timing: id  0 | task 6858 | n_gen =   1231, tg = 102.34 t/s, tg_3s = 101.17 t/s
+2.43.082.862 I slot print_timing: id  0 | task 6858 | prompt eval time =      63.47 ms /   204 tokens (    0.31 ms per token,  3214.37 tokens per second)
+2.43.082.866 I slot print_timing: id  0 | task 6858 |        eval time =   13881.79 ms /  1418 tokens (    9.80 ms per token,   102.08 tokens per second)
+2.43.082.866 I slot print_timing: id  0 | task 6858 |       total time =   13945.26 ms /  1622 tokens
+2.43.082.867 I slot print_timing: id  0 | task 6858 |    graphs reused =       8234

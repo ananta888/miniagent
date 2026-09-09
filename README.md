@@ -135,6 +135,12 @@ Das kleinere Coding-Modell dient einem schnelleren Praxistest. Phi-3.5 bleibt ü
 `--model microsoft/Phi-3.5-mini-instruct` verfügbar. Weitere Details und die Grenzen
 des Tests stehen im [Coding-Beispiel](examples/fibonacci_flask/README.md).
 
+Ein zusätzlicher [RTX-3080-Test mit dem bereits vorhandenen K2 Horizon 7B Q4_K_M](examples/fibonacci_flask/rtx3080.md)
+war erfolgreich: **12/12 Vertragsprüfungen**, zwei Reparaturpläne, fünf Modellaufrufe,
+88 Sekunden und rund 6,6 GiB VRAM-Spitzenbelegung. Alle Gewichte einschließlich
+Embeddings und der KV-Cache lagen auf der GPU. Dieses GGUF-Beispiel verwendet einen
+lokalen llama.cpp-Adapter; der generierte Code und die Messdaten sind veröffentlicht.
+
 ## Optionale DSPy-Promptoptimierung
 
 DSPy ist über **Modell-, Format- und Programmadapter sowie Optimierungsstrategien**
@@ -155,8 +161,9 @@ die Runtime übernimmt das exportierte Datenartefakt und friert es für Resume e
 Textdateien brauchen keinen JSON-Wrapper. Gates bleiben unverändert. Die mitgelieferten
 Python-Demos optimieren nur `.py`-Prompts; diese Auswahl beschränkt nicht den Dateimodus.
 Gemessen mit **0.5B**: BootstrapFewShot verbessert drei kleine Funktionstests von
-**2/3 auf 3/3**, GEPA bleibt bei **2/3**. Das vollständige Flask-Backend ist in den
-bisherigen Modellversuchen noch nicht erfolgreich. Details, Erweiterungspunkte und
+**2/3 auf 3/3**, GEPA bleibt bei **2/3**. Das vollständige Flask-Backend war mit den
+getesteten 0.5B-/1.5B-Modellen bisher nicht erfolgreich; der separate K2-Test oben
+verwendet keinen DSPy-Prompt. Details, Erweiterungspunkte und
 Grenzen stehen in [docs/dspy.md](docs/dspy.md).
 
 ## Schreib- und Ausführungsrechte

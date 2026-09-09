@@ -106,8 +106,12 @@ Resume. Das ist kein kontrollierter Modellvergleich.
 - Ein zusätzlicher modularer 0.5B-Versuch mit DSPy-API-Demos und späteren Zeilenkorrekturen
   blieb nach 60 Reparaturplänen bei höchstens 7/12.
 
-Mehr Wiederholungen allein lösen die verbleibenden Fehler nicht. Ein vollständiger
-autonomer Flask-Erfolg ist noch nicht nachgewiesen. Die getrennte
+Mehr Wiederholungen allein lösten bei diesen 0.5B-/1.5B-Versuchen die verbleibenden
+Fehler nicht. Ein zusätzlicher [K2-Horizon-Test auf der RTX 3080](rtx3080.md) erreichte
+dagegen alle zwölf Prüfungen: fünf Modellaufrufe, zwei Reparaturpläne und 88 Sekunden.
+Alle Gewichte und der KV-Cache lagen auf der GPU; Spitzenbelegung rund 6,6 GiB.
+Dieser einzelne Run verwendete einen lokalen GGUF-Adapter und keinen DSPy-Prompt.
+Die getrennte
 [DSPy-Funktionsoptimierung](../dspy_optimize/) verbesserte dagegen mit 0.5B die drei
 kleinen Funktionstasks von 2/3 auf 3/3. Dieser Erfolg ist nicht gleichbedeutend mit
 einem bestandenen HTTP-Vertrag.

@@ -52,6 +52,7 @@ python examples/fibonacci_flask/demo.py \
 Die Runtime friert das exportierte Prompt-Artefakt im Run ein. Standardmäßig
 beeinflusst es Python-Schreibschritte, keine Dependency-Dateien oder Pläne. Sämtliche
 Gates und unveränderten API-Tests bleiben aktiv. Der vollständige API-Vertrag wurde
-in den bisherigen echten Modellversuchen noch nicht erfüllt.
+mit den hier getesteten 0.5B-/1.5B-Modellen noch nicht erfüllt. Ein separater
+[K2-Horizon-Lauf](../fibonacci_flask/rtx3080.md) bestand ihn, ohne DSPy-Prompt.
 
 Weitere Module, Adapter, Optimierer und Einschränkungen: [DSPy-Anbindung](../../docs/dspy.md).

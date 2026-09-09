@@ -1,0 +1,55 @@
+```python
+from flask import Flask, jsonify, request
+
+app = Flask(__name__)
+
+
+def _parse_n():
+    """Validate the single 'n' query parameter.
+
+    Returns the integer n on success. Raises ValueError with a
+    descriptive message on any invalid input.
+    """
+    values = request.args.getlist("n")
+    if len(values) != 1:
+        raise ValueError("n must be provided exactly once")
+    raw = values[0]
+    if not raw:
+        raise ValueError("n must not be empty")
+    if not all(ch in "0123456789" for ch in raw):
+        raise ValueError("n must contain only ASCII decimal digits")
+    # Strip leading zeros so huge inputs (e.g. 5000 zeros) are handled
+    # with bounded work; a numeric value of 0 is perfectly valid.
+    stripped = raw.lstrip("0")
+    if not stripped:
+        n = 0
+    elif len(stripped) > 4:
+        raise ValueError("n must be between 0 and 1000 inclusive")
+    else:
+        n = int(stripped)
+    if n < 0 or n > 1000:
+        raise ValueError("n must be between 0 and 1000 inclusive")
+    return n
+
+
+def _fib(n):
+    """Return F(n) with F(0)=0, F(1)=1."""
+    a, b = 0, 1
+    for _ in range(n):
+        a, b = b, a + b
+    return a
+
+
+@app.get("/health")
+def health():
+    return jsonify({"status": "ok"})
+
+
+@app.get("/fibonacci")
+def fibonacci():
+    try:
+        n = _parse_n()
+    except ValueError as exc:
+        return jsonify({"error": str(exc)}), 400
+    return jsonify({"n": n, "value": _fib(n)})
+```

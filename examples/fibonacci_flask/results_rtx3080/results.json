@@ -1,0 +1,129 @@
+{
+  "backend": "local llama.cpp server",
+  "run_id": "cb5dbc268a51",
+  "status": "completed",
+  "model": {
+    "model": "/home/krusty/joschka-lokal-hermes-test/models/K2-Horizon-7B-Q4_K_M.gguf",
+    "revision": "a5094087a5a55c2de80264c11504d8ca95a022ff",
+    "max_new_tokens": 4096,
+    "max_context_tokens": 4096,
+    "temperature": 0.4,
+    "seed": 0,
+    "device": "cuda",
+    "local_files_only": true,
+    "max_generation_seconds": 180.0
+  },
+  "runtime_options": {
+    "file_output_format": "fenced",
+    "repair_strategy": "rewrite",
+    "execute_plan": true,
+    "planning_strategy": "files",
+    "fresh_after": 3,
+    "keep_best": true,
+    "repair_edit": "file",
+    "repair_paths": [
+      "app.py"
+    ],
+    "repair_functions": {},
+    "prompt_artifact": null,
+    "file_tasks": {}
+  },
+  "limits": {
+    "max_iterations": 250,
+    "max_tool_calls": 200,
+    "max_tokens": 2000000,
+    "max_runtime_seconds": 1800.0,
+    "max_consecutive_failures": 10,
+    "max_parse_retries": 8,
+    "max_blocked_actions": 8,
+    "max_repeated_actions": 5,
+    "max_replans": 40
+  },
+  "iterations": 13,
+  "tool_calls": 8,
+  "replans": 2,
+  "tokens": 11351,
+  "metrics": {
+    "llm_calls": 5,
+    "parser_recoveries": 0,
+    "invalid_actions": 1,
+    "blocked_actions": 0,
+    "loop_detections": 0,
+    "failed_tools": 2,
+    "successful_tools": 6
+  },
+  "best_tests_passed": 12,
+  "seconds": 88.0,
+  "reason": null,
+  "gpu": {
+    "name": "NVIDIA GeForce RTX 3080",
+    "total_mib": 10240,
+    "peak_used_mib": 6784,
+    "sampling_ms": 200,
+    "all_weight_tensors_on_gpu": true,
+    "offloaded_layers": "37/37",
+    "cuda_model_buffer_mib": 5322.23,
+    "cuda_kv_buffer_mib": 1152.0,
+    "cuda_compute_buffer_mib": 26.0,
+    "host_compute_buffer_mib": 4.0
+  },
+  "model_parameters_from_gguf": 8999178240,
+  "model_weight_bytes": 5592217984,
+  "gguf_sha256": "eb89c15a0ae9712be2ee462bf43802de14200f20f93b73da6eb68c2ebdd28e4e",
+  "runtime_git_commit": "f234df0f822dbf54b4b2430cd2c55bfa9ebec7a0",
+  "server_git_commit": "35999d101cf2233fc54f09c3c8d599da7303ce02",
+  "server_flags": [
+    "--device",
+    "CUDA0",
+    "--gpu-layers",
+    "999",
+    "--override-tensor",
+    ".*=CUDA0",
+    "--split-mode",
+    "none",
+    "--fit",
+    "off",
+    "--ctx-size",
+    "8192",
+    "--parallel",
+    "1",
+    "--batch-size",
+    "512",
+    "--ubatch-size",
+    "128",
+    "--flash-attn",
+    "on",
+    "--host",
+    "127.0.0.1",
+    "--port",
+    "18089",
+    "--no-webui",
+    "--reasoning-budget",
+    "1024",
+    "--verbosity",
+    "4"
+  ],
+  "contract_test_methods": 12,
+  "verified_indices": {
+    "first": 0,
+    "last": 1000,
+    "count": 1001
+  },
+  "verification_exit_codes": [
+    1,
+    1,
+    0
+  ],
+  "source_sha256": {
+    "app.py": "ec31aec5460b9809375b58bd2df14799af02b8fc4a2438d6dbb7ee9201511684",
+    "requirements.txt": "e9eae9074f097c101b125118dcd281694b2df5425064ab983bb2ca54cf50bea3"
+  },
+  "verifier_sha256": "ba90e2762311fbed38118f068ecc0224e371b7763f6358e841f8e165bf8161b3",
+  "notes": [
+    "One actual model run, no scripted model responses and no manual changes to generated app.py.",
+    "No DSPy artifact or supplied Flask reference was used.",
+    "Runtime elapsed time excludes one-time backend compilation and model loading.",
+    "Not a controlled comparison with earlier 0.5B/1.5B runs: model, backend, and output allowance differ."
+  ],
+  "example_adapter_sha256": "4a8238a9a25011cd555963e3531742a2ff8d88b830d72e224f72823c6d78ed96"
+}

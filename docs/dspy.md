@@ -132,6 +132,9 @@ Bootstrap-Trainingsaufgaben sind andere Funktionen, keine Fibonacci-Lösung.
 Das sind kleine Entwicklungsversuche mit einem Seed; Datensätze und Prompts wurden
 während der Entwicklung angepasst. Es ist kein statistischer Generalisierungsnachweis.
 Der vollständige Flask-Vertrag war mit diesen Modellen noch nicht erfolgreich.
+Ein separater [K2-Horizon-GGUF-Test auf der RTX 3080](../examples/fibonacci_flask/rtx3080.md)
+bestand alle zwölf API-Prüfungen nach zwei Reparaturplänen. Dieser Lauf verwendete
+keinen DSPy-Prompt und ist daher kein zusätzlicher Nachweis für Promptoptimierung.
 Mehr Reparaturversuche und mehr DSPy-Demos garantieren keinen Fortschritt.
 
 DSPy erhält keine Ausführungsrechte der Runtime. Auch bei weiteren Modulen wie
