@@ -27,6 +27,7 @@ def main() -> int:
     cli.add_argument('--web', action='store_true')
     cli.add_argument('--port', type=int, default=7681, help='Browser port')
     cli.add_argument('--bind', default='127.0.0.1', help='Listener IP; use non-loopback only behind an authenticated proxy')
+    cli.add_argument('--base-path', default='/', help='ttyd URL prefix behind a proxy, e.g. /terminal')
     cli.add_argument('--name', default='miniagent', help='Named Herdr session')
     cli.add_argument('--session', type=Path, default=ROOT / 'runs/chat/tetris')
     cli.add_argument('--config', type=Path, default=ROOT / 'examples/tetris_html/chat.toml')
@@ -37,6 +38,9 @@ def main() -> int:
         address = ipaddress.ip_address(args.bind)
         if address.is_unspecified or address.is_multicast or not address.is_private:
             raise ValueError('Browser listener requires a loopback or private IP')
+        if args.base_path != '/' and (not args.base_path.startswith('/') or
+                                     not args.base_path[1:].replace('-', '').isalnum()):
+            raise ValueError('URL prefix must be / or one alphanumeric path segment')
         herdr = binary('herdr')
         ttyd = binary('ttyd') if args.web else None
         os.chdir(ROOT)
@@ -90,7 +94,8 @@ def main() -> int:
             host = f'[{address}]' if address.version == 6 else str(address)
             print(f'Browser-Brücke: http://{host}:{args.port}', flush=True)
             print('Strg+C beendet die Browser-Brücke; Herdr und der Chat bleiben bestehen.', flush=True)
-            os.execv(ttyd, [ttyd, '-i', str(address), '-p', str(args.port), '-W', '-O', '-m', '1', *prefix])
+            web_args = ['-b', args.base_path] if args.base_path != '/' else []
+            os.execv(ttyd, [ttyd, '-i', str(address), '-p', str(args.port), '-W', '-O', '-m', '1', *web_args, *prefix])
         os.execv(herdr, prefix)
     except (OSError, ValueError, RuntimeError, subprocess.SubprocessError) as error:
         print(f'chat: {error}', file=sys.stderr)

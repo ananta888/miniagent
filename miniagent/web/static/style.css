@@ -1,0 +1,57 @@
+:root { color-scheme: dark; font-family: system-ui, sans-serif; font-size: 13px; --line: #30363e; --muted: #a1aab5; --accent: #a4e5cc; --left: 50%; }
+* { box-sizing: border-box; }
+body { margin: 0; background: #16191d; color: #eef1f3; }
+button, select { font: inherit; color: inherit; background: #252b32; border: 1px solid #414a54; border-radius: 6px; }
+button { cursor: pointer; padding: 6px 10px; white-space: nowrap; }
+button:hover, button[aria-pressed="true"] { background: #35443f; border-color: var(--accent); }
+button:disabled { opacity: .45; cursor: default; }
+a { color: inherit; text-decoration: none; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.topbar { height: 56px; padding: 0 20px; display: flex; gap: 24px; align-items: center; border-bottom: 1px solid var(--line); }
+.brand { font-size: 19px; font-weight: 700; letter-spacing: -.5px; }
+.brand span { color: var(--muted); font-weight: 400; font-size: 13px; letter-spacing: 0; margin-left: 12px; }
+.connection { color: var(--accent); font-size: 12px; }
+.terminal-link { margin-left: auto; color: var(--muted); font-size: 12px; }
+main { height: calc(100dvh - 56px); display: grid; grid-template-columns: minmax(0, var(--left)) 7px minmax(0, 1fr); }
+.terminal-panel, .results-panel { min-width: 0; min-height: 0; display: flex; flex-direction: column; }
+.panel-heading { display: flex; align-items: center; justify-content: space-between; min-height: 49px; padding: 0 16px; border-bottom: 1px solid var(--line); }
+h1, h2 { font-size: 14px; font-weight: 600; margin: 0; }
+.panel-heading span { color: var(--muted); font-size: 12px; }
+iframe { border: 0; width: 100%; height: 100%; display: block; }
+#terminal { flex: 1; min-height: 0; background: #000; }
+#divider { cursor: col-resize; background: #262d34; touch-action: none; }
+#divider:hover, #divider:focus { background: #668f7f; }
+body.dragging iframe { pointer-events: none; }
+#file-browser { padding: 12px 16px 0; border-bottom: 1px solid var(--line); }
+[hidden] { display: none !important; }
+.run-label { color: var(--muted); font-size: 11px; display: block; margin-bottom: 5px; }
+select { width: 100%; padding: 8px; }
+.list-heading { display: flex; justify-content: space-between; font-size: 11px; color: var(--muted); margin: 12px 0 6px; }
+#files { max-height: 190px; overflow: auto; padding-bottom: 8px; }
+.file { width: 100%; display: flex; align-items: center; gap: 9px; border-color: transparent; background: transparent; text-align: left; padding: 7px 8px; }
+.file[aria-pressed="true"] { background: #263b34; border-color: #405e50; }
+.file .path { overflow: hidden; text-overflow: ellipsis; flex: 1; }
+.file .size { color: var(--muted); font-size: 11px; }
+.file .tag { color: var(--accent); font-size: 10px; }
+.preview-toolbar { display: flex; gap: 8px; padding: 10px 16px; align-items: center; border-bottom: 1px solid var(--line); }
+#filename { font-family: ui-monospace, monospace; font-size: 12px; flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+#notice { color: #ffd999; font-size: 12px; padding: 0 16px; }
+#notice:not(:empty) { padding-top: 9px; padding-bottom: 9px; background: #30281d; }
+#preview { flex: 1; min-height: 0; overflow: auto; position: relative; background: #1c2025; }
+#preview iframe { background: white; }
+#preview pre { margin: 0; padding: 20px; white-space: pre-wrap; overflow-wrap: anywhere; line-height: 1.65; font: 12px/1.65 ui-monospace, monospace; }
+.image-view { display: flex; padding: 24px; align-items: center; justify-content: center; min-height: 100%; }
+.image-view img { max-width: 100%; max-height: 100%; object-fit: contain; }
+.empty { text-align: center; color: var(--muted); margin: auto; padding: 60px 25px; max-width: 400px; }
+.empty-icon { color: var(--accent); font-size: 38px; }
+.empty h3 { color: #e4e9ed; font-size: 17px; font-weight: 500; }
+.empty p { line-height: 1.8; }
+footer { display: flex; justify-content: space-between; gap: 8px; padding: 8px 16px; font-size: 10px; color: var(--muted); border-top: 1px solid var(--line); }
+@media (max-width: 800px) {
+  main { height: auto; grid-template-columns: minmax(0, 1fr); }
+  .terminal-panel { height: 55dvh; }
+  .results-panel { height: 80dvh; }
+  #divider { display: none; }
+  .topbar { padding: 0 12px; gap: 12px; }
+  .brand span, .connection { display: none; }
+}

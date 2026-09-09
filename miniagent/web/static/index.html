@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>miniagent · Werkstatt</title>
+  <link rel="stylesheet" href="/style.css">
+  <script src="/app.js" defer></script>
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="/">miniagent<span>Werkstatt</span></a>
+    <span class="connection" id="connection" role="status">Verbinde …</span>
+    <a class="terminal-link" href="/terminal/" target="_blank" rel="noopener">Terminal separat ↗</a>
+  </header>
+  <main id="layout">
+    <section class="terminal-panel" aria-label="Chat in Herdr">
+      <div class="panel-heading"><h1>Chat</h1><span>Herdr · lokale Sitzung</span></div>
+      <iframe id="terminal" src="/terminal/" title="Herdr mit miniagent Chat" allow="clipboard-read; clipboard-write"></iframe>
+    </section>
+    <div id="divider" role="separator" tabindex="0" aria-label="Breite von Chat und Vorschau ändern" aria-orientation="vertical" aria-valuemin="25" aria-valuemax="75" aria-valuenow="50"></div>
+    <section class="results-panel" aria-label="Ergebnisdateien und Vorschau">
+      <div class="panel-heading"><h2>Ergebnis</h2><button id="toggle-files" aria-expanded="true" aria-controls="file-browser">Dateien ausblenden</button></div>
+      <div id="file-browser">
+        <label class="run-label" for="run">Run / Beispiel</label>
+        <select id="run"><option value="">Aktueller / neuester Run</option></select>
+        <div class="list-heading"><span id="file-count">Dateien werden geladen …</span><span>Ausgabe zuerst</span></div>
+        <div id="files" aria-label="Dateiliste"></div>
+      </div>
+      <div class="preview-toolbar">
+        <span id="filename" title="">Keine Datei ausgewählt</span>
+        <button id="source" aria-pressed="false" disabled>Quelltext</button>
+        <button id="refresh" title="Dateiliste und Vorschau neu laden" aria-label="Neu laden">↻</button>
+      </div>
+      <div id="notice" role="status"></div>
+      <div id="preview"><div class="empty"><span class="empty-icon">◇</span><h3>Platz für dein Ergebnis</h3><p>Wähle oben eine Datei. HTML erscheint als Seite, andere Dateien als Text.</p></div></div>
+      <footer><span id="view-kind">Vorschau</span><span>Änderungen werden automatisch geladen</span></footer>
+    </section>
+  </main>
+</body>
+</html>

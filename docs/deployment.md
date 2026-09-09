@@ -5,8 +5,9 @@ Stand der Einrichtung: 9. September 2026.
 
 ```text
 Browser → Caddy :443 / TLS + Basic Auth
-            → 172.23.0.1:7682 / ttyd
-                → Herdr-Sitzung miniagent → Chat-TUI
+            ├─ /terminal/* → 172.23.0.1:7682 / ttyd
+            │                  → Herdr-Sitzung miniagent → Chat-TUI
+            └─ /* → 172.23.0.1:7683 / Ergebnisansicht + Datei-API
 ```
 
 Benutzername: `miniagent`. Das zufällig erzeugte Passwort liegt ausschließlich
@@ -17,7 +18,8 @@ Lokal anzeigen:
 python3 -c 'import json,pathlib; print(json.loads((pathlib.Path.home()/".config/miniagent/web-login.json").read_text())["password"])'
 ```
 
-Caddy verlangt die Anmeldung für alle Pfade, einschließlich `/ws`. Der Zugang
+Caddy verlangt die Anmeldung für alle Pfade, einschließlich `/terminal/ws`,
+`/api/*` und `/preview/*`. Der Zugang
 erlaubt die Bedienung einer Terminal-Sitzung als lokaler Benutzer `krusty`.
 Die Zugangsdaten gehören deshalb nur dem Betreiber; sie sind nicht im Repository.
 ttyd bindet ausschließlich an die private Docker-Bridge `172.23.0.1`, nicht an
@@ -25,19 +27,21 @@ eine öffentliche oder LAN-Adresse. Das bestehende Caddy-Netz `jupyter-edge`
 stellt diese Host-Adresse bereit. Der lokale Zugang auf `127.0.0.1:7681` bleibt
 unabhängig davon nutzbar. Jeder ttyd-Listener erlaubt einen gleichzeitigen Client.
 
-## Hintergrunddienst
+## Hintergrunddienste
 
-Der aktivierte systemd-Benutzerdienst heißt `miniagent-web.service`.
-Seine [Vorlage](../examples/chat/miniagent-web.service) enthält die tatsächlichen
+Die aktivierten systemd-Benutzerdienste heißen `miniagent-web.service` (ttyd)
+und `miniagent-view.service` (geteilte Ansicht und lesender Dateizugang).
+Die [Terminal-Vorlage](../examples/chat/miniagent-web.service) und
+[Ansicht-Vorlage](../examples/chat/miniagent-view.service) enthalten die tatsächlichen
 Pfade und die Bridge-Adresse dieses Rechners. Andere Installationen müssen diese
 Werte anpassen. Hier ist Benutzer-Lingering bereits aktiviert; der Dienst startet
 auch ohne interaktive Anmeldung. Ist die Docker-Bridge noch nicht verfügbar,
 versucht systemd nach zehn Sekunden einen Neustart.
 
 ```bash
-systemctl --user status miniagent-web.service
-journalctl --user -u miniagent-web.service -n 30
-systemctl --user restart miniagent-web.service
+systemctl --user status miniagent-web.service miniagent-view.service
+journalctl --user -u miniagent-web.service -u miniagent-view.service -n 30
+systemctl --user restart miniagent-view.service
 ```
 
 Zur erneuten Installation der Unit:
@@ -46,8 +50,9 @@ Zur erneuten Installation der Unit:
 cd /home/krusty/TinyPilot
 mkdir -p ~/.config/systemd/user
 cp examples/chat/miniagent-web.service ~/.config/systemd/user/
+cp examples/chat/miniagent-view.service ~/.config/systemd/user/
 systemctl --user daemon-reload
-systemctl --user enable --now miniagent-web.service
+systemctl --user enable --now miniagent-web.service miniagent-view.service
 ```
 
 Der Launcher startet Herdr und die TUI bei Bedarf. Browser-Schließen oder Neuladen
@@ -72,7 +77,14 @@ https://miniagent.minipc.ananta.de {
         Referrer-Policy no-referrer
         Cache-Control "no-store"
     }
-    reverse_proxy 172.23.0.1:7682
+    redir /terminal /terminal/ 308
+    handle /terminal/* {
+        header Content-Security-Policy "frame-ancestors 'self'"
+        reverse_proxy 172.23.0.1:7682
+    }
+    handle {
+        reverse_proxy 172.23.0.1:7683
+    }
 }
 ```
 
@@ -97,6 +109,9 @@ Die Sicherung vor dieser Erweiterung liegt lokal in
 - Falsches Passwort: HTTP `401`; korrektes Passwort: HTTP `200`.
 - Chromium: Herdr-TUI sichtbar, `/status` eingegeben, Antwort sichtbar.
 - Neuladen: Terminal-Verbindung wiederhergestellt, keine WebSocket-Fehler.
+- HTML mit relativ eingebundenem JavaScript: Tetris-Referenz per Tastatur bedient.
+- Dateiauswahl, Quelltext, Markdown als Text, Bildvorschau und ausblendbare Liste.
+- HTML-Vorschau: Zugriff auf übergeordnetes Fenster und Datei-API blockiert.
 - HTTP wird mit `308` auf HTTPS umgeleitet.
 - Bestehende Oberfläche auf `minipc.ananta.de`: weiterhin HTTP `200`.
 

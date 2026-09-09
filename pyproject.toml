@@ -31,3 +31,4 @@ include = ["miniagent*"]
 
 [tool.setuptools.package-data]
 "miniagent.prompts" = ["*.md"]
+"miniagent.web" = ["static/*.html", "static/*.css", "static/*.js"]

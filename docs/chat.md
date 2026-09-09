@@ -43,9 +43,12 @@ der Launcher das aktuelle Terminal an Herdr an. `--name` wählt eine andere
 Herdr-Sitzung; eine Chat-Sitzung sollte genau einer Herdr-Sitzung zugeordnet bleiben.
 
 Für den eingerichteten HTTPS-Zugang unter **https://miniagent.minipc.ananta.de**
-siehe [Deployment](deployment.md). `--bind` erlaubt eine explizite private
+siehe [Deployment](deployment.md). Dort zeigt die [geteilte Ansicht](workspace-view.md)
+links Herdr und rechts die Ergebnisdateien samt Vorschau.
+`--bind` erlaubt eine explizite private
 Listener-IP hinter einem authentifizierten Reverse Proxy; der Standard bleibt
 `127.0.0.1`. Wildcard- und öffentliche Listener-Adressen werden abgewiesen.
+`--base-path /terminal` setzt den ttyd-Prefix für die geteilte Proxy-Ansicht.
 
 Der Launcher verwendet `.cache/herdr-chat.toml` und ändert nicht die persönliche
 Herdr-Konfiguration. Beim erneuten Aufruf bleibt eine laufende Chat-Sitzung bestehen.

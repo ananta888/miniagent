@@ -1,0 +1,12 @@
+[Unit]
+Description=miniagent read-only workspace browser and split view
+
+[Service]
+Type=simple
+WorkingDirectory=/home/krusty/TinyPilot
+ExecStart=/home/krusty/TinyPilot/.venv/bin/python -m miniagent.web.server --bind 172.23.0.1 --port 7683 --example /home/krusty/TinyPilot/examples/tetris_html/reference
+Restart=on-failure
+RestartSec=10
+
+[Install]
+WantedBy=default.target

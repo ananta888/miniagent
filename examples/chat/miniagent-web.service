@@ -4,7 +4,7 @@ Description=miniagent Herdr web terminal behind authenticated Caddy
 [Service]
 Type=simple
 WorkingDirectory=/home/krusty/TinyPilot
-ExecStart=/home/krusty/TinyPilot/.venv/bin/python -m examples.chat.launch --web --bind 172.23.0.1 --port 7682
+ExecStart=/home/krusty/TinyPilot/.venv/bin/python -m examples.chat.launch --web --bind 172.23.0.1 --port 7682 --base-path /terminal
 Restart=on-failure
 RestartSec=10
 

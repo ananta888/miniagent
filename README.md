@@ -34,6 +34,10 @@ Herdr hat keine dokumentierte eingebaute Weboberfläche; dafür dient ttyd.
 
 Auf dem Mini-PC läuft der passwortgeschützte Zugang unter
 **https://miniagent.minipc.ananta.de**.
+Links bleibt Herdr bedienbar, rechts erscheinen die Ergebnisse. Die Dateiliste
+lässt sich einblenden; HTML wird als isolierte Seite gerendert, Bilder als Bild,
+alle übrigen Formate zunächst als Text. Geänderte Dateien werden automatisch
+nachgeladen. [Bedienung der Ergebnisansicht](docs/workspace-view.md).
 [Deployment, lokale Zugangsdaten und Dienstverwaltung](docs/deployment.md).
 
 [Die spielbare Tetris-Referenz](examples/tetris_html/reference/) besteht 14 Vertragsprüfungen
