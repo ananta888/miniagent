@@ -1,5 +1,7 @@
 # miniagent
 
+Lizenz: [BSD-3-Clause](LICENSE).
+
 Ein kleiner Python-Runtime-Kern für lokale Modelle mit etwa 2–8B Parametern,
 insbesondere Phi-3.5 Mini. Das Modell schlägt Aktionen vor; die Runtime entscheidet
 über ihre Ausführung. Kein natives Tool-Calling, kein Cloud-Dienst, kein Agent-Framework.
