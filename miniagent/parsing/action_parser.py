@@ -2,6 +2,7 @@ from miniagent.parsing.file_parser import file_blocks, parse_file_content
 from miniagent.parsing.function_edit_parser import function_target, parse_function_edit
 from miniagent.parsing.json_parser import ParseError, ParserPipeline
 from miniagent.parsing.line_edit_parser import parse_line_edit
+from miniagent.parsing.replacement_parser import parse_replacement
 from miniagent.state.models import AgentState
 
 
@@ -21,6 +22,11 @@ class ActionParser:
             self.recovered = self.pipeline.recovered
             return action
         path = step.proposal.arguments["path"]
+        if (state.options.repair_edit == 'replace' and state.repair_feedback and context.get('CURRENT FILE')
+                and (not state.options.repair_paths or path in state.options.repair_paths)):
+            self.method = 'replace'
+            self.recovered = [kind for kind, _ in file_blocks(text)] != ['before', 'after']
+            return parse_replacement(text, path, context['CURRENT FILE'], context['WORKSPACE FILE HASH'])
         target = function_target(state, context)
         if target:
             self.method = "function"

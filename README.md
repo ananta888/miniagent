@@ -16,6 +16,30 @@ Agent = Model + Prompt + State + Plan + Parser + Gates + Tools + Loop.
 Kleine Modelle müssen dadurch weder perfekten Chat-Verlauf verwalten noch selbst
 Tool-Freigaben treffen. Prompts geben Orientierung, Pydantic validiert, Gates entscheiden.
 
+## Chat im Terminal und Browser
+
+Die neue Chat-TUI läuft direkt mit `miniagent tui` oder in Herdr. Für Browserzugang
+verbindet eine optionale lokale ttyd-Brücke den Browser mit Herdr:
+
+```bash
+# Vorher den lokalen Modellserver starten; siehe docs/chat.md.
+.venv/bin/python -m examples.chat.launch --web
+```
+
+Danach **http://127.0.0.1:7681** öffnen. Normale Nachrichten sind Chat;
+`/run AUFGABE` startet einen kontrollierten Run, `/fix FEHLER` einen Korrektur-Run.
+`/pause`, `/resume`, `/files` und `/status` helfen beim Arbeiten.
+[Vollständige Anleitung und Grenzen](docs/chat.md).
+Herdr hat keine dokumentierte eingebaute Weboberfläche; dafür dient ttyd.
+
+[Die spielbare Tetris-Referenz](examples/tetris_html/reference/) besteht 14 Vertragsprüfungen
+und einen echten Browser-Test. Sie wurde manuell erstellt und ist ausdrücklich kein
+Erfolg des autonomen Modelllaufs. Das ursprüngliche Modellergebnis bleibt als
+[unverändertes Fehlerbeispiel](examples/tetris_html/) erhalten.
+
+Beim langen K2-Reparaturlauf trat ein CUDA-Absturz auf; danach erkannte `nvidia-smi`
+die GPU nicht mehr. [Entwicklungsbericht](examples/tetris_html/development_report.json).
+
 ## Aktueller Umfang
 
 Enthalten sind Transformers-Inferenz, LLM-Plan und begrenztes Replanning, JSON-Parsing,

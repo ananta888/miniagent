@@ -61,7 +61,8 @@ class PromptBuilder:
         for name, summary in ({} if file_task else state.required_read_summaries).items():
             sections.append(f"SPECIFICATION ({name})\n{summary}")
         line_edit = state.options.repair_edit == "line" and repairing and context.get("CURRENT FILE")
-        fresh = state.stalled_verifications >= state.options.fresh_after and repairing and not line_edit and not target
+        replace_edit = state.options.repair_edit == 'replace' and repairing and context.get('CURRENT FILE')
+        fresh = state.stalled_verifications >= state.options.fresh_after and repairing and not line_edit and not target and not replace_edit
         if context.get("CURRENT FILE") and not fresh:
             label = "BEST TESTED FILE TO CORRECT" if state.options.keep_best and state.best_attempt else "CURRENT FILE TO CORRECT"
             source = context["CURRENT FILE"]
@@ -90,7 +91,17 @@ class PromptBuilder:
             kind = "This file must contain executable Python source. "
         sections.append(f"OUTPUT ONLY {path}\n{kind}One code fence containing only this file. Do not output any other file. "
                         "If the file contains code fences, use an outer fence longer than every fence inside the file.")
-        if target:
+        if replace_edit:
+            sections[0] = f'Fix one localized part of {path} to address the first failing test.'
+            sections[-1] = ('Return exactly two closed code fences. First use label before and copy the exact '
+                            'existing faulty fragment, including indentation, which must occur once in the file. '
+                            'Then use label after with its corrected replacement. No JSON. No other files. '
+                            'Keep the rest of the file unchanged; prefer a small edit over rewriting everything.\n'
+                            'REPAIR FORMAT (overrides original file-generation format):\n'
+                            '```before\nexact faulty source fragment\n```\n'
+                            '```after\ncorrected source fragment, different from before\n```')
+            sections = [s for s in sections if not s.startswith('Make the code satisfy')]
+        elif target:
             sections[0] = f"Correct the Python function {target.name} in {path}. The runtime preserves the rest of the file."
             sections[-1] = (f"Return only the complete corrected definition of {target.name} in one Python code fence. "
                             "Keep its function name and arguments. Do not include imports or other functions.")

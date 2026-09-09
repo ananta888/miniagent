@@ -1,4 +1,5 @@
 import time
+from collections.abc import Callable
 from pathlib import Path
 
 from miniagent.execution.executor import Executor
@@ -20,7 +21,8 @@ from miniagent.tools.base import workspace_digest
 
 class AgentLoop:
     def __init__(self, manager: StateManager, model: ModelBackend, parser: ActionParser,
-                 gates: GatePipeline, executor: Executor, prompts: PromptStrategy):
+                 gates: GatePipeline, executor: Executor, prompts: PromptStrategy,
+                 should_pause: Callable[[], bool] | None = None):
         self.manager = manager
         self.model = model
         self.parser = parser
@@ -31,6 +33,7 @@ class AgentLoop:
         self.context = ContextBuilder(self.observations, executor.context)
         self.events = EventLog(manager.run_dir)
         self.planner = Planner()
+        self.should_pause = should_pause or (lambda: False)
 
     def stop(self, state: AgentState, reason: str, *, failed: bool = False) -> None:
         state.status = "failed" if failed else "blocked"
@@ -45,6 +48,10 @@ class AgentLoop:
         if state.pending_action is not None:
             self.recover_tool(state)
         while state.status == "running":
+            if self.should_pause():
+                self.manager.save(state)
+                self.events.emit("run_paused", iteration=state.iteration)
+                break
             try:
                 proposal = self.runtime_proposal(state)
             except ValueError as error:

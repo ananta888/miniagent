@@ -31,11 +31,13 @@ class Runtime:
 
     def __init__(self, manager: StateManager, model: ModelBackend | None = None,
                  backend_factory: Callable[[ModelConfig], ModelBackend] = local_backend,
-                 prompt_strategy_factory: Callable[[ToolRegistry], PromptStrategy] | None = None):
+                 prompt_strategy_factory: Callable[[ToolRegistry], PromptStrategy] | None = None,
+                 should_pause: Callable[[], bool] | None = None):
         self.manager = manager
         self.model = model
         self.backend_factory = backend_factory
         self.prompt_strategy_factory = prompt_strategy_factory
+        self.should_pause = should_pause
 
     def run(self) -> AgentState:
         with self.manager.lock():
@@ -63,5 +65,5 @@ class Runtime:
                 path = workspace_path(self.manager.run_dir, state.options.prompt_artifact)
                 prompts = ArtifactPromptStrategy(prompts, PromptArtifact.load(path))
             loop = AgentLoop(self.manager, model, ActionParser(ParserPipeline([StrictJSONParser(), FencedJSONParser(), ToolRecoveryParser()])),
-                             gates, executor, prompts)
+                             gates, executor, prompts, self.should_pause)
             return loop.run(state)

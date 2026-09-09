@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="de">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Tetris · miniagent Referenz</title>
+<style>
+  * { box-sizing: border-box; }
+  body { margin:0; min-height:100vh; display:grid; place-items:center; background:#101522; color:#edf2ff; font:16px system-ui,sans-serif; }
+  main { display:flex; align-items:center; gap:40px; padding:24px; }
+  canvas { border:2px solid #34425c; border-radius:8px; background:#0a0e17; box-shadow:0 18px 60px #0005; }
+  aside { max-width:250px; }
+  h1 { font-size:42px; margin:0 0 16px; letter-spacing:-2px; }
+  #score { color:#79e8c5; font-size:26px; font-weight:700; }
+  #status { min-height:24px; }
+  p { line-height:1.6; color:#aebbd2; }
+  button { border:0; border-radius:8px; padding:12px 22px; background:#79e8c5; color:#10231e; font:600 16px system-ui; cursor:pointer; }
+  small { display:block; margin-top:24px; color:#7889a6; }
+  @media(max-width:600px) { main { flex-direction:column; gap:20px; } aside { text-align:center; } h1 { font-size:28px; } }
+</style>
+<main>
+  <canvas id="board" width="240" height="480" aria-label="Tetris-Spielfeld"></canvas>
+  <aside>
+    <h1>Tetris</h1>
+    <div id="score">0 Punkte</div>
+    <p id="status" aria-live="polite">Spiel läuft</p>
+    <p>← → Bewegen<br>↑ Drehen · ↓ Senken<br>Leertaste: sofort ablegen</p>
+    <button id="restart">Neustart</button>
+    <small>Manuell erstellte Referenz<br>für die miniagent-Verifikation</small>
+  </aside>
+</main>
+<script src="engine.js"></script>
+<script>
+  window.game = new Tetris();
+  const board = document.getElementById('board');
+  const ctx = board.getContext('2d');
+  const score = document.getElementById('score');
+  const status = document.getElementById('status');
+  const colors = ['#0a0e17','#66d9ef','#ffe080','#bb9aff','#79e8c5','#ff829b','#7caaff','#ffb46c'];
+  let last = null, elapsed = 0;
+  function cell(x,y,value) {
+    ctx.fillStyle = colors[value] || colors[1];
+    ctx.fillRect(x*24,y*24,24,24);
+    ctx.strokeStyle = '#101522';
+    ctx.strokeRect(x*24,y*24,24,24);
+  }
+  function draw() {
+    game.board.forEach((row,y) => row.forEach((value,x) => cell(x,y,value)));
+    if (!game.gameOver) game.piece.forEach((row,y) => row.forEach((value,x) => {
+      if(value) cell(game.x+x,game.y+y,value);
+    }));
+    score.textContent = game.score + ' Punkte';
+    status.textContent = game.gameOver ? 'Game Over – noch eine Runde?' : 'Spiel läuft';
+  }
+  function frame(now) {
+    if(last !== null && !game.gameOver) elapsed += Math.min(1000,now-last);
+    last = now;
+    while(elapsed >= 500 && !game.gameOver) { game.tick(); elapsed -= 500; }
+    draw();
+    requestAnimationFrame(frame);
+  }
+  document.addEventListener('keydown', e => {
+    const actions = {ArrowLeft:()=>game.move(-1),ArrowRight:()=>game.move(1),
+      ArrowUp:()=>game.rotate(),ArrowDown:()=>game.tick(),' ':()=>{game.hardDrop();elapsed=0;}};
+    if(actions[e.key]) { e.preventDefault(); actions[e.key](); draw(); }
+  });
+  document.getElementById('restart').addEventListener('click', () => {
+    game.reset();elapsed=0;last=null;draw();
+  });
+  draw();requestAnimationFrame(frame);
+</script>
+</html>

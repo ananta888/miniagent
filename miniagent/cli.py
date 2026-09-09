@@ -23,6 +23,7 @@ def resolve_run(value: str, runs_dir: Path) -> Path:
 def parser() -> argparse.ArgumentParser:
     cli = argparse.ArgumentParser(description="Minimal local agent runtime")
     commands = cli.add_subparsers(dest="command", required=True)
+    commands.add_parser('tui', help='Interactive chat in a terminal or Herdr')
     run = commands.add_parser("run", help="Create and execute a run")
     run.add_argument("goal")
     run.add_argument("--model", help="Local model path or Hugging Face model ID")
@@ -42,6 +43,10 @@ def parser() -> argparse.ArgumentParser:
 
 
 def main(argv: list[str] | None = None) -> int:
+    argv = sys.argv[1:] if argv is None else argv
+    if argv and argv[0] == 'tui':
+        from miniagent.tui import main as tui_main
+        return tui_main(argv[1:])
     args = parser().parse_args(argv)
     try:
         if args.command == "run":

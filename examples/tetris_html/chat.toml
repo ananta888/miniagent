@@ -1,0 +1,52 @@
+
+[chat]
+source = "task"
+backend = "llama"
+port = 18089
+
+[model]
+max_new_tokens = 4096
+max_context_tokens = 4096
+temperature = 0.4
+seed = 0
+max_generation_seconds = 180.0
+
+[limits]
+max_iterations = 250
+max_tool_calls = 200
+max_tokens = 1000000
+max_runtime_seconds = 1800.0
+max_consecutive_failures = 10
+max_parse_retries = 8
+max_blocked_actions = 8
+max_repeated_actions = 3
+max_replans = 40
+
+[tools]
+write_paths = ["engine.js", "tetris.html"]
+required_verifications = ["engine", "ui"]
+command_timeout_seconds = 10.0
+
+[tools.commands]
+engine = ["/usr/bin/node", "{config_dir}/verify.mjs", "--engine"]
+ui = ["/usr/bin/node", "{config_dir}/verify.mjs", "--ui"]
+
+[runtime]
+file_output_format = "fenced"
+repair_strategy = "rewrite"
+execute_plan = true
+planning_strategy = "files"
+fresh_after = 3
+keep_best = false
+repair_edit = "replace"
+repair_paths = ["engine.js", "tetris.html"]
+
+[runtime.repair_by_command]
+engine = ["engine.js"]
+ui = ["tetris.html"]
+
+[runtime.repair_functions]
+
+[runtime.file_tasks]
+"engine.js" = "Write only engine.js, complete in one closed code fence. No JSON. Keep under 6000 characters.\n# Playable Tetris\n\nCreate engine.js and tetris.html, using local files only. No libraries or network.\nThe old example was broken. Separate the small game engine from browser rendering.\n\nengine.js exposes globalThis.Tetris, a class with static shapes: an array of seven distinct\nrectangular numeric matrices for I,O,T,S,Z,J,L. Each has exactly four occupied cells.\nInstance fields: board (20 rows of 10 numeric cells, 0 empty), piece (matrix),\nx and y (integer position of piece top-left), score (number), gameOver (boolean).\nConstructor calls reset(). Copy shapes before rotation; never mutate Tetris.shapes.\nMethods: reset(), spawn(), move(dx), rotate(), tick(), hardDrop().\nmove(dx) returns false and preserves x on wall/occupied collision, otherwise true.\nrotate() rotates clockwise only when the rotated piece fits; on failure preserve it.\ntick() moves down one row or locks, clears full rows, and spawns the next piece.\nhardDrop() lands and locks without overlap, clears rows, then spawns.\nClearing rows shifts everything above down and inserts empty rows at the top;\naward 100 points per row, with no other scoring. Game over when a new piece collides.\nAfter gameOver, movement, rotation, tick and hardDrop do nothing. reset clears it.\nTests can assign board, piece, x, y, score and gameOver directly to construct fixtures.\n\n"
+"tetris.html" = "Write only tetris.html, complete in one closed code fence. No JSON. Keep under 6000 characters.\ntetris.html loads engine.js using a regular script tag (works via file://).\nExpose window.game = new Tetris(). Draw board and active piece on canvas#board.\nUse a 240x480 canvas, 24px square cells: column is x, row is y.\nUse distinct visible colors. Show #score and #status and button#restart.\nArrowLeft/Right call move(-1/1), ArrowUp rotate, ArrowDown tick, Space hardDrop.\nPrevent page scrolling for these keys. Use requestAnimationFrame with accumulated\nelapsed time, calling tick every 500 milliseconds. Redraw after inputs and ticks.\nShow Game Over. Restart resets game, gravity timer and screen; animation continues.\nInclude a short German instruction, a title, score and restart button.\n\nTetris exposes board:20x10 numeric cells, piece:numeric matrix, x,y:piece position, score,gameOver. Methods:move(dx),rotate(),tick(),hardDrop(),reset(). Do not reimplement the engine."

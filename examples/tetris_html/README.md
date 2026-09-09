@@ -1,5 +1,11 @@
 # Tetris in HTML: unverändertes K2-Modellergebnis
 
+**Zum Spielen:** Die separat [manuell erstellte Referenz](reference/) besteht
+14 Vertragsprüfungen und neun Interaktionsprüfungen im echten Browser.
+Der folgende Abschnitt archiviert weiterhin den ursprünglichen Modellversuch.
+Die neue [Chat-TUI](../../docs/chat.md) kann Tetris-Aufträge gegen die nun vorhandenen
+funktionalen Prüfungen ausführen; ein autonomer Erfolg ist bisher nicht nachgewiesen.
+
 [tetris.html](tetris.html) ist die unveränderte, 5010 Byte große Ausgabe des lokalen
 Runs `9d4ac7babede`. Herunterladen und im Browser öffnen, oder aus dem Checkout:
 
@@ -127,3 +133,27 @@ Reparaturschleifen. Planerstellung, Lesen und Abschluss benötigten keine Modell
 [Observations](evidence/observations.jsonl) und alle drei
 [Modellantworten](evidence/artifacts/) liegen unverändert im Beispiel. Das Verzeichnis
 ist ein Ergebnisarchiv; es ist kein vollständiger Workspace für `resume`.
+
+## Neuer Reparaturversuch und funktionale Prüfungen
+
+Der neue Workflow trennt `engine.js` und `tetris.html`, prüft Spielregeln und
+Browser-Anbindung getrennt und repariert die jeweils betroffene Datei. Die
+[Spezifikation](task/SPEC.md) und der [vertrauenswürdige Verifier](verify.mjs) liegen
+außerhalb der vom Modell beschreibbaren Dateien. Der Verifier läuft mit Node.js ohne
+weitere Pakete; er ist keine Betriebssystem-Sandbox.
+
+```bash
+.venv/bin/python -m examples.tetris_html.demo
+# Oder über den Chat: /run Erstelle Tetris gemäß SPEC.md
+```
+
+Das [Chat-Profil](chat.toml) und das Demo erlauben 40 Reparaturpläne, 250 Iterationen,
+200 Tool-Aufrufe und 30 Minuten. Kleine exakte Text-Ersetzungen (`repair_edit = "replace"`)
+vermeiden die Neugenerierung einer ganzen Datei. Alle Änderungen werden erneut geprüft.
+
+Der Entwicklungsrun `2f8120bcb26d` erreichte noch keinen Abschluss. Nach 16 Reparaturplänen
+und mehreren Parser-Retries brach der K2-Server mit einem CUDA-Fehler ab. Während dieses
+Entwicklungsruns wurden Prüfungen und Prompt-/Reparaturstrategien verändert; er ist
+kein kontrollierter Benchmark. [Gespeicherte Messwerte und letzter Fehler](development_report.json).
+Die manuelle Referenz wurde separat zum Prüfen des Verifiers und zum Spielen erstellt;
+sie wurde dem Modell nicht als Lösung übergeben.

@@ -1,0 +1,16 @@
+{
+  "browser_smoke": "passed",
+  "checks": [
+    "gravity",
+    "left/right",
+    "rotation",
+    "hard_drop",
+    "line_clear",
+    "score",
+    "game_over",
+    "restart",
+    "gravity_after_restart"
+  ],
+  "page_errors": [],
+  "browser": "151.0.7922.34"
+}

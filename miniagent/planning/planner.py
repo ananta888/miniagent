@@ -1,3 +1,5 @@
+import json
+
 from miniagent.state.models import AgentState, PlanAction, PlanStep, StepState
 
 
@@ -15,8 +17,13 @@ class Planner:
 
     def repair(self, state: AgentState) -> PlanAction:
         """Explicit opt-in policy: rewrite permitted artifacts, then verify again."""
+        paths = state.options.repair_paths or state.policy.write_paths
+        if state.options.repair_by_command and state.last_action:
+            tool, arguments = json.loads(state.last_action)
+            if tool == 'shell':
+                paths = state.options.repair_by_command.get(arguments['command'], paths)
         steps = [PlanStep(description=f"Correct {path} using observed errors", tool="write_file",
-                          arguments={"path": path}) for path in state.options.repair_paths or state.policy.write_paths]
+                          arguments={"path": path}) for path in paths]
         steps += [PlanStep(description=f"Verify with {command}", tool="shell", arguments={"command": command})
                   for command in state.policy.required_verifications]
         return PlanAction(type="plan", steps=steps)

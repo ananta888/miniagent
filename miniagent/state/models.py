@@ -38,8 +38,9 @@ class RuntimeOptions(StrictModel):
     planning_strategy: Literal["model", "files"] = "model"
     fresh_after: int = Field(default=3, ge=1)
     keep_best: bool = False
-    repair_edit: Literal["file", "line"] = "file"
+    repair_edit: Literal["file", "line", "replace"] = "file"
     repair_paths: list[str] = Field(default_factory=list, max_length=12)
+    repair_by_command: dict[str, list[str]] = Field(default_factory=dict)
     repair_functions: dict[str, list[str]] = Field(default_factory=dict)
     prompt_artifact: str | None = None
     file_tasks: dict[str, str] = Field(default_factory=dict)
